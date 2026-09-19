@@ -28,6 +28,7 @@ The Angular 22 application still shows the generated starter screen. The busines
 - Add official Angular compile-time i18n with Spanish (`es-CR`) at `/` and a complete English build at `/en/`, including document navigation, localized static SEO, hreflang, sitemap, tests, and Netlify-safe publication.
 - Replace the generic flower favicon/header mark with a cache-busted compact `CA` monogram derived from the supplied brand reference.
 - Ensure the static-SEO post-build CLI executes from symlinked CI/Netlify workspace paths so the deployed English document cannot retain Spanish source metadata.
+- Place authoritative Netlify configuration beside the Angular package and remove the stale source `_redirects` fallback so monorepo config precedence cannot bypass `npm run build` or return Spanish HTML for missing routes.
 
 ## Non-goals
 
@@ -64,6 +65,7 @@ The Angular 22 application still shows the generated starter screen. The busines
 | Localized deployment | Netlify serves physical `/index.html` and `/en/index.html` artifacts. Remove the unnecessary global SPA fallback for this anchor-only landing so unknown English URLs cannot silently receive Spanish HTML. |
 | Favicon identity | Replace the generic flower with a square, legible CA monogram based on the supplied `Recurso 5.png`; use a new versioned filename to invalidate browser favicon caches and reuse it as the compact header mark. |
 | CI CLI identity | The post-build localizer must identify direct execution by canonical real path, not raw `process.argv[1]` equality. Netlify invokes repository commands through symlinked build paths; the raw-path guard silently skipped `main()` while exiting successfully, leaving `/en/` metadata Spanish despite local verification. |
+| Netlify monorepo config | Netlify resolves configuration from package directory, then base directory, then repository root. Add `cafe-artesano/netlify.toml` beside `package.json` with `npm run build` and the local publish path; keep the root config as repository fallback. Delete `src/_redirects` so no hidden `/* /index.html 200` rule survives framework processing. |
 
 ## Workload forecast
 
@@ -84,6 +86,7 @@ Estimated cumulative scope: 800–1,250 authored changed lines, excluding existi
 | CA-11 | Localize static SEO/build outputs, add canonical/hreflang/sitemap rules, make Netlify locale-safe, and replace the favicon/header mark with a versioned CA monogram. | Delegated writer: build script, metadata, assets, tests, and deployment config. | 180–300 |
 | CA-12 | Verify both locale artifacts, extraction integrity, SEO/discovery output, accessibility regression, and production publication layout. | Independent verifier plus parent Angular MCP/build artifact inspection. | Evidence-only |
 | CA-13 | Fix symlink-safe post-build CLI detection and prove the deployed English metadata is actually localized in Netlify CI. | Delegated writer plus local symlink simulation and live deploy verification. | 20–50 |
+| CA-14 | Align Netlify package-directory configuration and remove the stale source redirect after live deploy proves the root config/build command is being bypassed. | Delegated writer plus live deploy/API/HTTP verification. | 20–50 |
 
 ## Checklist
 
@@ -167,11 +170,16 @@ Estimated cumulative scope: 800–1,250 authored changed lines, excluding existi
   - [x] Independently verify translated content, locale navigation, SEO outputs, accessibility, favicon, and Netlify publication mapping.
   - [x] Run a final Angular CLI MCP production build and document any post-build step separately.
   - [x] Record remaining live-browser, crawler, and deployment limitations.
-- [ ] **CA-13 — Netlify symlink-safe post-build execution** *(implementation verified; deployment pending)*
+- [x] **CA-13 — Netlify symlink-safe post-build execution**
   - [x] Replace raw CLI-path equality with canonical real-path main-module detection.
   - [x] Add a regression test that executes/detects the script through a filesystem symlink.
   - [x] Re-run 35+ tests, localized build, artifact verification, and symlinked CLI simulation.
-  - [ ] Verify a subsequent Netlify deployment serves English canonical/metadata/noscript at `/en/`.
+  - [x] Publish the correction and inspect the subsequent Netlify deployment; this disproved symlink detection as the only live cause and opened CA-14.
+- [ ] **CA-14 — Netlify monorepo configuration precedence** *(in progress)*
+  - [ ] Add package-directory `cafe-artesano/netlify.toml` that runs `npm run build` and publishes `dist/cafe-artesano/browser`.
+  - [ ] Delete `cafe-artesano/src/_redirects` so Netlify cannot restore the global Spanish SPA fallback.
+  - [ ] Test root/package configuration agreement and absence of source/generated catch-all redirects.
+  - [ ] Publish and verify deploy summary reports no redirect, `/en/` static metadata is English, legacy icon URLs and unknown routes return 404.
 
 ## Acceptance criteria
 
@@ -246,8 +254,10 @@ Estimated cumulative scope: 800–1,250 authored changed lines, excluding existi
 - CA-12 final release verification passed: 66 extracted messages, 35/35 tests, Angular CLI MCP production build at 277.20 kB initial / 76.56 kB estimated transfer, deterministic post-build localization, `verify:locales`, corrected production-surface gates, and full whitespace checks. Independent verification retained the full bilingual/SEO/favicon/motion/accessibility PASS matrix with no actionable findings.
 - Remaining limitations initially appeared live-only. A direct production fetch of deploy `e6459da` then found `/en/` had the correct English app/base but still carried Spanish title, canonical, OG, JSON-LD description, and noscript.
 - Diagnosis reproduced the CI failure locally: invoking `scripts/localize-static-seo.mjs` through a symlink exited 0 without output because its raw `process.argv[1] === fileURLToPath(import.meta.url)` guard evaluated false. Netlify uses symlinked build workspace paths, so the Angular build deployed successfully while silently skipping post-build localization.
-- CA-13 replaced raw comparison with canonical `realpathSync` detection and added genuine filesystem-symlink coverage. Independent verification found no severity findings: 36/36 tests, localized build, normal check, actual symlinked check with validator log, whitespace, and exact changed scope all pass. Release closure now requires committing/pushing the three CA-13 files and confirming live `/en/` metadata/noscript.
+- CA-13 replaced raw comparison with canonical `realpathSync` detection and added genuine filesystem-symlink coverage. Independent verification found no severity findings: 36/36 tests, localized build, normal check, actual symlinked check with validator log, whitespace, and exact changed scope all pass.
+- Commit `f71f780` published CA-13 and Netlify deploy `6aaeb038f5ba680008266380` reached ready state, but reported all output files unchanged and still processed one redirect. Live `/en/` metadata/noscript remained Spanish; missing routes and removed legacy favicon URLs returned the Spanish root with HTTP 200.
+- The surviving rule is `cafe-artesano/src/_redirects` (`/* /index.html 200`). Netlify monorepo documentation says package/base-directory configuration takes precedence over repository-root config, explaining why the root `npm run build` command can be bypassed. CA-14 adds authoritative package-local config and deletes the stale redirect.
 
 ## Next step
 
-Implement and verify CA-13, then publish the corrected commit and confirm live English metadata/noscript at `/en/`. Afterward hard-refresh both locales, visually review motion/theme/video/favicon, confirm unknown routes return 404, verify live discovery assets, and run Google Rich Results plus Facebook Sharing Debugger. Migrate all absolute URLs together when a custom domain is available.
+Implement and verify CA-14, publish it, and require live evidence: Netlify deploy summary with no redirect rule, English metadata/noscript at `/en/`, and 404 responses for unknown routes plus removed favicon names. Then hard-refresh both locales, visually review motion/theme/video/favicon, verify live discovery assets, and run Google Rich Results plus Facebook Sharing Debugger. Migrate all absolute URLs together when a custom domain is available.
