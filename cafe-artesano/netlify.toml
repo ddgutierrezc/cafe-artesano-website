@@ -1,3 +1,3 @@
 [build]
-  command = "cd cafe-artesano && npm run build"
-  publish = "cafe-artesano/dist/cafe-artesano/browser"
+  command = "npm run build"
+  publish = "dist/cafe-artesano/browser"
