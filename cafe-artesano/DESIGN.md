@@ -7,7 +7,7 @@ Use this foundation to present Café Artesano as a calm, local, natural-roast co
 - **Character:** artisanal, natural, warm, and quietly confident—not rustic clutter or luxury excess.
 - **Message:** foreground coffee origin, natural roasting, and Palmichal de Acosta with clear Spanish HTML copy.
 - **Visual rhythm:** pair generous pale space with grounded coffee-brown type and restrained forest-green accents.
-- **Evidence:** `public/logo.jpg` establishes the CA monogram, brown wordmark, green botanical illustration, and off-white field. `banner_principal.jpg` adds plantation greens, mountains, coffee fruit, and warm product photography; `banner_secundario.jpg` reinforces pale neutrals, steam, and fine green framing.
+- **Evidence:** `public/logo.jpg` provides the compact CA monogram for the header; the supplied path-based `public/LOGOTIPO CA.svg` provides the full brown, green, and off-white vertical lockup for large-format presentation. `banner_principal.jpg` adds plantation greens, mountains, coffee fruit, and warm product photography; `banner_secundario.jpg` reinforces pale neutrals, steam, and fine green framing.
 
 ## Tokens
 
@@ -21,6 +21,7 @@ Values remain visual estimates from the supplied JPEGs, not sampled values. Auto
 | `--ca-surface-hero` | `#EEF0E5` | Hero gradient endpoint |
 | `--ca-surface-action-hover` | `#EAF0E5` | Secondary-action hover surface |
 | `--ca-header-surface` | `#F7F8F3` | Opaque sticky-header surface |
+| `--ca-brand-surface` | `#F9F8F6` | Fixed off-white surface behind supplied fixed-colour brand art in either theme |
 | `--ca-ink` | `#3D2C22` | Primary coffee-brown text and dark surface |
 | `--ca-ink-muted` | `#5B493D` | Secondary reading text |
 | `--ca-forest` | `#365C3A` | Primary brand action |
@@ -48,6 +49,7 @@ The `:root` values above are the light theme. `html[data-theme='dark']` override
 | --- | --- | --- |
 | `--ca-canvas` / `--ca-surface` / `--ca-surface-muted` | `#17110D` / `#241A15` / `#2E241C` | Page, raised, and muted surfaces |
 | `--ca-surface-hero` / `--ca-surface-action-hover` / `--ca-header-surface` | `#211812` / `#33261D` / `#17110D` | Hero, secondary-action hover, and header surfaces |
+| `--ca-brand-surface` | `#F9F8F6` | Stable surface for the supplied fixed-colour vertical logo |
 | `--ca-ink` / `--ca-ink-muted` | `#FFFFFF` / `#F3F1EC` | Primary and secondary reading text |
 | `--ca-forest` / `--ca-forest-deep` / `--ca-leaf` | `#D7F0D0` / `#D7F0D0` / `#365C3A` | Action text, links, and selection |
 | `--ca-warm` / `--ca-line` / `--ca-focus` | `#E5C08E` / `#A99B90` / `#E6F0DB` | Quote marker, boundaries, and focus |
@@ -157,9 +159,23 @@ Use a centered content container (`max-width: 72rem`) with 20px mobile gutters a
 
 ## Imagery and motion
 
-Treat `logo.jpg` as the only logo source. Keep embedded lettering in `banner_principal.jpg` and `banner_secundario.jpg` uncropped and do not repeat their claims as image-only content. Prefer natural, uncrowded crops; preserve the portrait video’s orientation and provide controls and a text introduction nearby. Images need concise Spanish alt text that describes content, not decorative styling; empty alt text is appropriate only when an adjacent label conveys the same information.
+Use `logo.jpg` only as the compact header monogram; use the supplied path-based `LOGOTIPO CA.svg` as the prominent full lockup on `--ca-brand-surface`, whose fixed off-white value keeps the fixed-colour art readable in both themes. `favicon.svg` is a dedicated, derived green floral/CA monogram for 16–48px browser chrome; `favicon.ico` remains a fallback. Keep embedded lettering in `banner_principal.jpg` and `banner_secundario.jpg` uncropped and do not repeat their claims as image-only content. Prefer natural, uncrowded crops; preserve the portrait video’s orientation and provide controls and a text introduction nearby. Images need concise Spanish alt text that describes content, not decorative styling; empty alt text is appropriate only when an adjacent label conveys the same information.
 
-Motion is optional: use a 160–240ms opacity or transform transition for hover and entrance polish. Do not autoplay essential information, animate large backgrounds continuously, or rely on motion to reveal content. Disable nonessential animation and smooth scrolling for `prefers-reduced-motion: reduce`.
+GSAP progressively enhances already-visible content only after Angular renders in a browser. `ScrollTrigger` and `ScrollToPlugin` register once, and component-owned `gsap.context()` plus `gsap.matchMedia()` limit transform/opacity reveals and the hero's `-3%` transform-only parallax to desktop non-reduced-motion users. Contexts and media queries revert on destruction; late dynamic imports are ignored after destruction. There is no CSS pre-hide, pinning, snapping, layout-property animation, or smooth-scroll CSS. The footer's native 44px arrow control has the Spanish name `Volver al inicio`; it uses GSAP ScrollToPlugin with `autoKill` when available and immediate native scrolling otherwise. The video starts muted only when at least 25% visible, pauses below that threshold, retains native controls for audio opt-in, safely absorbs rejected playback, disconnects its observer on destruction, and does not auto-play under reduced motion.
+
+### Local hero media provenance
+
+| Topic | Record |
+| --- | --- |
+| Source | Official Unsplash page: `https://unsplash.com/photos/red-round-fruits-in-tilt-shift-lens-FpsB7Jo8nHk` and official CDN asset `photo-1612668196612-70262cad2ad7` |
+| Creator | Juliana Barquero, confirmed by the official download filename |
+| Retrieved | 2026-09-19 |
+| License | [Unsplash License](https://unsplash.com/license) |
+| Original inspected media | 2000 × 1335 pixels |
+| Local WebP variants | `hero_cafe_cerezas_fpsb7jo8nhk-768.webp` (768 × 512, 39,594 bytes); `hero_cafe_cerezas_fpsb7jo8nhk-1280.webp` (1280 × 853, 97,626 bytes); `hero_cafe_cerezas_fpsb7jo8nhk.webp` (1600 × 1067, 174,338 bytes) |
+| Use | Responsive semantic hero media of ripe coffee cherries, with intrinsic 2000 × 1335 dimensions, Spanish alternative text, responsive `picture`/`srcset`, and Angular `NgOptimizedImage` priority because it is the intended LCP candidate |
+
+All hero variants are served locally; the page does not hotlink Unsplash at runtime.
 
 ## Accessibility and component patterns
 

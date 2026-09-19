@@ -7,6 +7,7 @@
   --ca-surface-hero: #eef0e5;
   --ca-surface-action-hover: #eaf0e5;
   --ca-header-surface: #f7f8f3;
+  --ca-brand-surface: #f9f8f6;
   --ca-ink: #3d2c22;
   --ca-ink-muted: #5b493d;
   --ca-forest: #365c3a;
@@ -44,6 +45,7 @@ html[data-theme='dark'] {
   --ca-surface-hero: #211812;
   --ca-surface-action-hover: #33261d;
   --ca-header-surface: #17110d;
+  --ca-brand-surface: #f9f8f6;
   --ca-ink: #ffffff;
   --ca-ink-muted: #f3f1ec;
   --ca-forest: #d7f0d0;
@@ -98,7 +100,6 @@ html[data-theme='dark'] {
 
 html {
   color-scheme: light dark;
-  scroll-behavior: smooth;
   background: var(--ca-canvas);
 }
 
@@ -195,9 +196,210 @@ section[id] {
   color: var(--ca-ink);
 }
 
+.site-header {
+  background: var(--ca-header-surface);
+  border-bottom: 1px solid var(--ca-line);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.cta-primary {
+  --ca-cta-surface: var(--ca-cta-default);
+  background-color: var(--ca-cta-surface);
+  border: 2px solid var(--ca-cta-border);
+}
+
+.cta-primary,
+.cta-primary:hover,
+.cta-primary:focus-visible,
+.cta-primary:active {
+  color: var(--ca-on-action);
+}
+
+.cta-primary:hover {
+  --ca-cta-surface: var(--ca-cta-hover);
+}
+
+.cta-primary:focus-visible {
+  --ca-cta-surface: var(--ca-cta-default);
+  outline: 3px solid var(--ca-focus);
+  outline-offset: 3px;
+}
+
+.cta-primary:active {
+  --ca-cta-surface: var(--ca-cta-active);
+}
+
+.hero {
+  background: linear-gradient(120deg, var(--ca-canvas) 0%, var(--ca-surface-hero) 100%);
+}
+
+.brand-lockup {
+  background: var(--ca-brand-surface);
+}
+
+.eyebrow {
+  color: var(--ca-forest-deep);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
+}
+
+h1,
+h2 {
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(2.65rem, 6vw, 5.25rem);
+  max-width: 12ch;
+}
+
+h2 {
+  font-size: clamp(2rem, 4vw, 3.35rem);
+}
+
+.lead,
+.story-copy,
+.process-copy,
+.quality-copy > p,
+.video-copy > p,
+.contact-copy,
+.hero-note-copy {
+  color: var(--ca-ink-muted);
+  font-size: 1.08rem;
+  max-width: 42rem;
+}
+
+.lead {
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  margin: 1.5rem 0 0;
+}
+
+.process-copy {
+  margin-bottom: 1.5rem;
+}
+
+.text-link {
+  color: var(--ca-forest-deep);
+  font-weight: 800;
+  text-decoration-thickness: 0.125rem;
+  text-underline-offset: 0.2rem;
+}
+
+.text-link:hover {
+  color: var(--ca-forest);
+}
+
+.process-list {
+  border-top: 1px solid var(--ca-line);
+  margin: 0;
+}
+
+.process-list > div {
+  border-bottom: 1px solid var(--ca-line);
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 2.5rem 1fr;
+  padding-block: 1.25rem;
+}
+
+.process-list dt {
+  color: var(--ca-forest-deep);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.process-list dd {
+  margin: 0;
+}
+
+.process-list strong,
+.process-list span {
+  display: block;
+}
+
+.process-list span {
+  color: var(--ca-ink-muted);
+  margin-top: 0.25rem;
+}
+
+.quality-copy > p:not(.eyebrow) {
+  margin-top: 1.25rem;
+}
+
+.quote {
+  border-left: 3px solid var(--ca-warm);
+  color: var(--ca-ink) !important;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.25rem !important;
+  padding-left: 1rem;
+}
+
+.section-video .eyebrow,
+#contacto .eyebrow {
+  color: var(--ca-on-dark-accent);
+}
+
+.section-video .video-copy > p {
+  color: var(--ca-on-dark-body);
+}
+
+.video-frame figcaption {
+  color: var(--ca-on-dark-caption);
+  font-size: 0.9rem;
+  margin-top: 0.75rem;
+}
+
+.contact-copy {
+  color: var(--ca-on-dark-muted);
+}
+
+.phone-link {
+  color: var(--ca-on-dark);
+  display: inline-flex;
+  flex-direction: column;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.phone-link span {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+app-root a:focus-visible,
+app-root video:focus-visible {
+  outline: 3px solid var(--ca-focus);
+  outline-offset: 3px;
+}
+
+.section-video video:focus-visible,
+#contacto a:focus-visible,
+footer a:focus-visible,
+footer button:focus-visible {
+  outline-color: var(--ca-on-dark);
+}
+
+.section-video h2,
+#contacto h2 {
+  color: var(--ca-on-dark);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
+  .hero a:hover {
+    transform: none;
   }
 
   *,

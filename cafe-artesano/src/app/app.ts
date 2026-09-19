@@ -1,5 +1,5 @@
 import { DOCUMENT, isPlatformBrowser, NgOptimizedImage } from '@angular/common';
-import { Component, computed, inject, OnDestroy, PLATFORM_ID, signal } from '@angular/core';
+import { afterNextRender, Component, computed, ElementRef, inject, OnDestroy, PLATFORM_ID, signal, ViewChild } from '@angular/core';
 
 type Theme = 'light' | 'dark';
 
@@ -8,6 +8,7 @@ const THEME_COLORS: Record<Theme, string> = {
   light: '#F7F8F3',
   dark: '#17110D',
 };
+let gsapPluginsRegistered = false;
 
 @Component({
   imports: [NgOptimizedImage],
@@ -16,27 +17,45 @@ const THEME_COLORS: Record<Theme, string> = {
   templateUrl: './app.html',
 })
 export class App implements OnDestroy {
+  @ViewChild('brandVideo') private brandVideo?: ElementRef<HTMLVideoElement>;
+
   readonly theme = signal<Theme>('light');
   readonly themeToggleLabel = computed(() => this.theme() === 'dark'
     ? 'Activar tema claro (tema oscuro activo)'
     : 'Activar tema oscuro (tema claro activo)');
 
   private readonly document = inject(DOCUMENT);
+  private readonly host = inject(ElementRef<HTMLElement>);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private mediaQuery?: MediaQueryList;
   private mediaQueryListener?: (event: MediaQueryListEvent) => void;
+  private reducedMotionQuery?: MediaQueryList;
+  private reducedMotionListener?: (event: MediaQueryListEvent) => void;
+  private videoObserver?: IntersectionObserver;
+  private motionContext?: { revert: () => void };
+  private motionMedia?: { revert: () => void };
+  private scrollToTopWithGsap?: () => void;
   private hasSessionThemeOverride = false;
+  private isDestroyed = false;
 
   constructor() {
     if (this.isBrowser) {
       this.initializeTheme();
+      afterNextRender(() => this.initializeBrowserEnhancements());
     }
   }
 
   ngOnDestroy(): void {
+    this.isDestroyed = true;
     if (this.mediaQuery && this.mediaQueryListener) {
       this.mediaQuery.removeEventListener('change', this.mediaQueryListener);
     }
+    if (this.reducedMotionQuery && this.reducedMotionListener) {
+      this.reducedMotionQuery.removeEventListener('change', this.reducedMotionListener);
+    }
+    this.videoObserver?.disconnect();
+    this.motionMedia?.revert();
+    this.motionContext?.revert();
   }
 
   toggleTheme(): void {
@@ -50,6 +69,146 @@ export class App implements OnDestroy {
     }
 
     this.applyTheme(nextTheme);
+  }
+
+  scrollToTop(event: Event): void {
+    event.preventDefault();
+
+    if (!this.isBrowser || this.reducedMotionQuery?.matches || !this.scrollToTopWithGsap) {
+      this.scrollImmediately();
+      return;
+    }
+
+    this.scrollToTopWithGsap();
+  }
+
+  private initializeBrowserEnhancements(): void {
+    if (this.isDestroyed) {
+      return;
+    }
+
+    this.reducedMotionQuery = typeof window.matchMedia === 'function'
+      ? window.matchMedia('(prefers-reduced-motion: reduce)')
+      : undefined;
+    this.reducedMotionListener = (event) => {
+      if (event.matches) {
+        this.videoObserver?.disconnect();
+        this.videoObserver = undefined;
+        this.brandVideo?.nativeElement.pause();
+        this.motionMedia?.revert();
+        this.motionContext?.revert();
+        return;
+      }
+
+      this.initializeVideoObserver();
+      void this.initializeGsap();
+    };
+    this.reducedMotionQuery?.addEventListener('change', this.reducedMotionListener);
+
+    this.initializeVideoObserver();
+    if (!this.reducedMotionQuery?.matches) {
+      void this.initializeGsap();
+    }
+  }
+
+  private initializeVideoObserver(): void {
+    const video = this.brandVideo?.nativeElement;
+    if (!video || this.videoObserver || this.reducedMotionQuery?.matches || !('IntersectionObserver' in window)) {
+      return;
+    }
+
+    this.videoObserver = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.target !== video) {
+          continue;
+        }
+
+        if (entry.intersectionRatio >= 0.25) {
+          try {
+            void video.play().catch(() => undefined);
+          } catch {
+            // Playback can be blocked by browser policy; native controls remain available.
+          }
+        } else {
+          video.pause();
+        }
+      }
+    }, { threshold: 0.25 });
+    this.videoObserver.observe(video);
+  }
+
+  private async initializeGsap(): Promise<void> {
+    try {
+      const [{ gsap }, { ScrollToPlugin }, { ScrollTrigger }] = await Promise.all([
+        import('gsap'),
+        import('gsap/ScrollToPlugin'),
+        import('gsap/ScrollTrigger'),
+      ]);
+      if (this.isDestroyed || this.reducedMotionQuery?.matches) {
+        return;
+      }
+
+      if (!gsapPluginsRegistered) {
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+        gsapPluginsRegistered = true;
+      }
+
+      this.scrollToTopWithGsap = () => {
+        gsap.to(window, {
+          duration: 0.45,
+          ease: 'power2.out',
+          scrollTo: { y: 0, autoKill: true },
+        });
+      };
+
+      this.motionMedia?.revert();
+      this.motionContext?.revert();
+      this.motionContext = gsap.context(() => {
+        this.motionMedia = gsap.matchMedia();
+        this.motionMedia.add('(min-width: 48rem) and (prefers-reduced-motion: no-preference)', () => {
+          const heroMedia = this.host.nativeElement.querySelector<HTMLElement>('.hero-media');
+          if (heroMedia) {
+            gsap.to(heroMedia, {
+              ease: 'none',
+              yPercent: -3,
+              scrollTrigger: {
+                trigger: heroMedia,
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: true,
+              },
+            });
+          }
+
+          this.host.nativeElement.querySelectorAll<HTMLElement>('.gsap-reveal').forEach((element) => {
+            ScrollTrigger.create({
+              trigger: element,
+              start: 'top 88%',
+              once: true,
+              onEnter: () => {
+                gsap.fromTo(element, { opacity: 0.9, yPercent: 2 }, {
+                  duration: 0.45,
+                  ease: 'power2.out',
+                  opacity: 1,
+                  overwrite: 'auto',
+                  yPercent: 0,
+                });
+              },
+            });
+          });
+        });
+      }, this.host.nativeElement);
+    } catch {
+      // The page retains native anchors and immediate scrolling when GSAP cannot load.
+    }
+  }
+
+  private scrollImmediately(): void {
+    try {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    } catch {
+      // Some embedded browsers expose a non-callable scroll API; the anchor remains usable.
+    }
   }
 
   private initializeTheme(): void {
