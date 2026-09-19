@@ -27,6 +27,7 @@ The Angular 22 application still shows the generated starter screen. The busines
 - Eliminate visible animation jumps: retain stable GSAP parallax and scroll-control motion, but remove hero/section entrance reveals if they cannot initialize without snapping already-rendered content.
 - Add official Angular compile-time i18n with Spanish (`es-CR`) at `/` and a complete English build at `/en/`, including document navigation, localized static SEO, hreflang, sitemap, tests, and Netlify-safe publication.
 - Replace the generic flower favicon/header mark with a cache-busted compact `CA` monogram derived from the supplied brand reference.
+- Ensure the static-SEO post-build CLI executes from symlinked CI/Netlify workspace paths so the deployed English document cannot retain Spanish source metadata.
 
 ## Non-goals
 
@@ -62,6 +63,7 @@ The Angular 22 application still shows the generated starter screen. The busines
 | Localized SEO | Preserve crawlable static metadata in each generated `index.html`. The Spanish source index remains authoritative for `/`; a deterministic post-build step localizes the generated English index and verifies canonical, hreflang, Open Graph locale, JSON-LD, and noscript output. Sitemap lists both locale URLs with alternates. |
 | Localized deployment | Netlify serves physical `/index.html` and `/en/index.html` artifacts. Remove the unnecessary global SPA fallback for this anchor-only landing so unknown English URLs cannot silently receive Spanish HTML. |
 | Favicon identity | Replace the generic flower with a square, legible CA monogram based on the supplied `Recurso 5.png`; use a new versioned filename to invalidate browser favicon caches and reuse it as the compact header mark. |
+| CI CLI identity | The post-build localizer must identify direct execution by canonical real path, not raw `process.argv[1]` equality. Netlify invokes repository commands through symlinked build paths; the raw-path guard silently skipped `main()` while exiting successfully, leaving `/en/` metadata Spanish despite local verification. |
 
 ## Workload forecast
 
@@ -81,6 +83,7 @@ Estimated cumulative scope: 800–1,250 authored changed lines, excluding existi
 | CA-10 | Add Angular localize infrastructure, mark all visible/runtime strings, extract XLIFF 2, translate English, and add accessible locale navigation. | Delegated writer: dependency/config/template/catalog implementation. | 220–360 plus generated XLIFF |
 | CA-11 | Localize static SEO/build outputs, add canonical/hreflang/sitemap rules, make Netlify locale-safe, and replace the favicon/header mark with a versioned CA monogram. | Delegated writer: build script, metadata, assets, tests, and deployment config. | 180–300 |
 | CA-12 | Verify both locale artifacts, extraction integrity, SEO/discovery output, accessibility regression, and production publication layout. | Independent verifier plus parent Angular MCP/build artifact inspection. | Evidence-only |
+| CA-13 | Fix symlink-safe post-build CLI detection and prove the deployed English metadata is actually localized in Netlify CI. | Delegated writer plus local symlink simulation and live deploy verification. | 20–50 |
 
 ## Checklist
 
@@ -159,11 +162,16 @@ Estimated cumulative scope: 800–1,250 authored changed lines, excluding existi
   - [x] Remove or narrow the global Netlify SPA fallback so physical locale documents are authoritative.
   - [x] Create `cafe-artesano-ca-v1.svg`, update favicon/header references, and verify no generic flower reference remains.
   - [x] Add build-artifact tests for both locales, assets, links, metadata, and discovery files.
-- [ ] **CA-12 — Bilingual release verification** *(in progress)*
-  - [ ] Run extraction integrity, unit tests, full localized production build, post-build metadata verification, and whitespace checks.
-  - [ ] Independently verify translated content, locale navigation, SEO outputs, accessibility, favicon, and Netlify publication mapping.
-  - [ ] Run a final Angular CLI MCP production build and document any post-build step separately.
-  - [ ] Record remaining live-browser, crawler, and deployment limitations.
+- [x] **CA-12 — Bilingual release verification**
+  - [x] Run extraction integrity, unit tests, full localized production build, post-build metadata verification, and whitespace checks.
+  - [x] Independently verify translated content, locale navigation, SEO outputs, accessibility, favicon, and Netlify publication mapping.
+  - [x] Run a final Angular CLI MCP production build and document any post-build step separately.
+  - [x] Record remaining live-browser, crawler, and deployment limitations.
+- [ ] **CA-13 — Netlify symlink-safe post-build execution** *(implementation verified; deployment pending)*
+  - [x] Replace raw CLI-path equality with canonical real-path main-module detection.
+  - [x] Add a regression test that executes/detects the script through a filesystem symlink.
+  - [x] Re-run 35+ tests, localized build, artifact verification, and symlinked CLI simulation.
+  - [ ] Verify a subsequent Netlify deployment serves English canonical/metadata/noscript at `/en/`.
 
 ## Acceptance criteria
 
@@ -235,7 +243,11 @@ Estimated cumulative scope: 800–1,250 authored changed lines, excluding existi
 - CA-10 final readback confirmed the corrected source-faithful contact line (`From Palmichal de Acosta, let’s connect.`) in the English catalog, assertion, and emitted bundle. Parent Git inventory confirmed no CA-11 file was touched. The Spanish static metadata/noscript in the English physical index moved to CA-11 as an explicit release blocker.
 - CA-11 implemented deterministic English generated-index localization/validation, bilingual canonical/hreflang/OG/X/JSON-LD/noscript output, bilingual alternate sitemap, physical-document Netlify publication, and a versioned path-based CA monogram.
 - Final CA-11 correction removed both legacy favicon candidates and references, made the localizer reject any reappearance, and added byte-idempotency, duplicate-tag, check-only, English-only mutation, and legacy-candidate tests. Independent reverification found no severity findings; 35/35 tests, localized build, and artifact check pass.
+- CA-12 final release verification passed: 66 extracted messages, 35/35 tests, Angular CLI MCP production build at 277.20 kB initial / 76.56 kB estimated transfer, deterministic post-build localization, `verify:locales`, corrected production-surface gates, and full whitespace checks. Independent verification retained the full bilingual/SEO/favicon/motion/accessibility PASS matrix with no actionable findings.
+- Remaining limitations initially appeared live-only. A direct production fetch of deploy `e6459da` then found `/en/` had the correct English app/base but still carried Spanish title, canonical, OG, JSON-LD description, and noscript.
+- Diagnosis reproduced the CI failure locally: invoking `scripts/localize-static-seo.mjs` through a symlink exited 0 without output because its raw `process.argv[1] === fileURLToPath(import.meta.url)` guard evaluated false. Netlify uses symlinked build workspace paths, so the Angular build deployed successfully while silently skipping post-build localization.
+- CA-13 replaced raw comparison with canonical `realpathSync` detection and added genuine filesystem-symlink coverage. Independent verification found no severity findings: 36/36 tests, localized build, normal check, actual symlinked check with validator log, whitespace, and exact changed scope all pass. Release closure now requires committing/pushing the three CA-13 files and confirming live `/en/` metadata/noscript.
 
 ## Next step
 
-Design and implement official Angular 22 compile-time i18n for Spanish at `/` and English at `/en/`, together with the cache-busted CA-monogram favicon. Afterward: commit/push, Netlify redeploy, hard-refresh visual review, live discovery/social validation, and eventual custom-domain migration.
+Implement and verify CA-13, then publish the corrected commit and confirm live English metadata/noscript at `/en/`. Afterward hard-refresh both locales, visually review motion/theme/video/favicon, confirm unknown routes return 404, verify live discovery assets, and run Google Rich Results plus Facebook Sharing Debugger. Migrate all absolute URLs together when a custom domain is available.

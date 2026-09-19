@@ -1,3 +1,4 @@
+import { realpathSync } from 'node:fs';
 import { access, readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
@@ -338,6 +339,15 @@ export async function localizePublishedSeo(publishRoot = PUBLISH_ROOT, { checkOn
   return { localizedEnglish, wroteEnglish };
 }
 
+export function isDirectExecution(argvPath, moduleUrl) {
+  if (!argvPath) return false;
+  try {
+    return realpathSync(argvPath) === realpathSync(fileURLToPath(moduleUrl));
+  } catch {
+    return false;
+  }
+}
+
 async function main() {
   const argumentsAfterScript = process.argv.slice(2);
   const checkOnly = argumentsAfterScript.length === 1 && argumentsAfterScript[0] === '--check';
@@ -348,7 +358,7 @@ async function main() {
   console.log(`Validated localized static SEO and discovery artifacts (${checkOnly ? 'check' : 'localized'} mode).`);
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+if (isDirectExecution(process.argv[1], import.meta.url)) {
   main().catch((error) => {
     console.error(error.message);
     process.exitCode = 1;

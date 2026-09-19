@@ -6,6 +6,7 @@ interface FileSystem {
   mkdtempSync(prefix: string): string;
   existsSync(path: string): boolean;
   rmSync(path: string, options: { force: true; recursive: true }): void;
+  symlinkSync(target: string, path: string): void;
 }
 
 interface PathModule {
@@ -16,13 +17,19 @@ interface OperatingSystem {
   tmpdir(): string;
 }
 
+interface UrlModule {
+  pathToFileURL(path: string): URL;
+}
+
 declare function require(module: 'node:fs'): FileSystem;
 declare function require(module: 'node:path'): PathModule;
 declare function require(module: 'node:os'): OperatingSystem;
+declare function require(module: 'node:url'): UrlModule;
 
-const { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } = require('node:fs');
+const { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } = require('node:fs');
 const { resolve } = require('node:path');
 const { tmpdir } = require('node:os');
+const { pathToFileURL } = require('node:url');
 
 type StructuredData = Record<string, unknown>;
 
@@ -158,6 +165,26 @@ describe('static SEO and deployment artifacts', () => {
     expect(() => localizer.localizeEnglishHtml(duplicateCanonical)).toThrow(/expected exactly one canonical link/);
     expect(() => localizer.localizeEnglishHtml(duplicateDescription)).toThrow(/expected exactly one description meta/);
     expect(() => localizer.validateLocalizedHtml(localized.replace('og:locale" content="en_US"', 'og:locale" content="es_CR"'), 'en')).toThrow(/Static SEO validation failed/);
+  });
+
+  it('recognizes only canonical direct and symlinked localizer entrypoints', async () => {
+    // @ts-expect-error The Node-only post-build script intentionally has no TypeScript declaration surface.
+    const localizer = await import('../../scripts/localize-static-seo.mjs');
+    const scriptPath = resolve('scripts/localize-static-seo.mjs');
+    const scriptUrl = pathToFileURL(scriptPath);
+    const symlinkRoot = mkdtempSync(resolve(tmpdir(), 'cafe-artesano-localizer-link-'));
+    const symlinkPath = resolve(symlinkRoot, 'localize-static-seo.mjs');
+
+    try {
+      symlinkSync(scriptPath, symlinkPath);
+      expect(localizer.isDirectExecution(undefined, scriptUrl)).toBe(false);
+      expect(localizer.isDirectExecution(resolve(symlinkRoot, 'missing.mjs'), scriptUrl)).toBe(false);
+      expect(localizer.isDirectExecution(resolve('src/index.html'), scriptUrl)).toBe(false);
+      expect(localizer.isDirectExecution(scriptPath, scriptUrl)).toBe(true);
+      expect(localizer.isDirectExecution(symlinkPath, scriptUrl)).toBe(true);
+    } finally {
+      rmSync(symlinkRoot, { force: true, recursive: true });
+    }
   });
 
   it('keeps localizer checks read-only and writes only the English fixture', async () => {

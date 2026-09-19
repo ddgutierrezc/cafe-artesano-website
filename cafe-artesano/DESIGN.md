@@ -232,4 +232,6 @@ The source `src/index.html` is the Spanish static-SEO authority: canonical `/`, 
 
 Netlify publishes `dist/cafe-artesano/browser` with no global SPA redirect. The anchor-only landing therefore serves physical `/index.html` and `/en/index.html`; unknown routes receive ordinary 404 handling instead of Spanish fallback HTML. Keep this behavior unless actual client-side routes are introduced.
 
+CI must invoke the localizer through its canonical filesystem identity: the CLI guard resolves both `process.argv[1]` and its module URL with `realpathSync`, so a symlinked `node <script> --check` invocation still runs validation. Missing, unresolvable, or unrelated entry paths must not invoke the localizer.
+
 For one locale during development, run `npm start` for the unlocalized source-development build, `npm run ng -- serve --configuration es-CR` for the compiled Spanish locale, or `npm run ng -- serve --configuration en` for the compiled English locale. Production `npm run build` intentionally emits both locales.
