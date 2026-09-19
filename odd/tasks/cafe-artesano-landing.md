@@ -110,13 +110,13 @@ Estimated total: 430–650 authored changed lines, excluding existing assets.
   - [x] Persist an explicit user choice and react safely to system changes when no override exists.
   - [x] Cover initialization, toggle, persistence, and contrast-critical markup with focused tests.
   - [x] Re-run tests, production build, and whitespace/component-CSS checks before CA-5.
-- [ ] **CA-7 — SEO, social sharing, and discoverability** *(research in progress)*
-  - [ ] Add canonical, robots, title/description, Open Graph, Twitter Card, locale, image dimensions/alt, and mobile metadata using the temporary Netlify URL.
-  - [ ] Add valid `Organization` JSON-LD with brand, logo, contact, area, Facebook `sameAs`, and no unverified physical-café claims.
-  - [ ] Add `public/robots.txt` and absolute `public/sitemap.xml`; ensure both reach the final publish directory.
-  - [ ] Create/use an optimized social preview image with documented dimensions and absolute URL.
-  - [ ] Add accessible Facebook and WhatsApp links without inventing Instagram.
-  - [ ] Add focused metadata/links tests and verify production output contains all discovery files.
+- [x] **CA-7 — SEO, social sharing, and discoverability**
+  - [x] Add canonical, robots, title/description, Open Graph, Twitter Card, locale, image dimensions/alt, and mobile metadata using the temporary Netlify URL.
+  - [x] Add valid `Organization` JSON-LD with brand, logo, contact, area, Facebook `sameAs`, and no unverified physical-café claims.
+  - [x] Add `public/robots.txt` and absolute `public/sitemap.xml`; ensure both reach the final publish directory.
+  - [x] Create/use an optimized social preview image with documented dimensions and absolute URL.
+  - [x] Add accessible Facebook and WhatsApp links without inventing Instagram.
+  - [x] Add focused metadata/links tests and verify production output contains all discovery files.
 
 ## Acceptance criteria
 
@@ -168,7 +168,12 @@ Estimated total: 430–650 authored changed lines, excluding existing assets.
 - Parent verification separately confirmed the Unsplash source redirect, 2000×1335 original, official download filename identifying Juliana Barquero, and current Unsplash license page; the app serves only local derivatives.
 - CA-5 correction added a semantic no-script fallback, pre-import mobile/reduced-motion gating, deterministic real GSAP module-mock coverage, and text-free compact header/favicon artwork. Independent reverification found no severity findings; 16/16 tests and production build passed, GSAP resolved at 3.15.0, and `app.css` remained 111 bytes.
 - Parent Angular CLI MCP spot check passed after final CA-5 correction: 249.38 kB initial bundle / 67.63 kB estimated transfer, with GSAP retained in lazy chunks.
+- CA-7 implemented static canonical/robots/OG/X metadata, constrained Organization JSON-LD, Facebook/WhatsApp links, `robots.txt`, one-page sitemap, and a local 1200×630 social JPEG. Writer checks passed with 17/17 tests and a clean 250.48 kB build.
+- Independent CA-7 verification found no functional metadata defect but returned partial with one MEDIUM coverage gap: unit tests covered social links but not metadata uniqueness, canonical consistency, JSON-LD constraints, discovery-file contents, image-dimension agreement, or publication configuration.
+- CA-7 correction added six deterministic SEO/discovery tests (37 assertions), including exact-once metadata, canonical consistency, parsed constrained JSON-LD, robots/sitemap semantics, binary JPEG dimension validation, Angular public-copy behavior, and root Netlify base/publish resolution.
+- Independent CA-7 reverification found no severity findings: 23/23 tests passed, production discovery artifacts matched source semantics, and no CA-4/5/6 regression was detected.
+- Parent Angular CLI MCP final spot check passed: 250.50 kB initial bundle / 67.71 kB estimated transfer; GSAP remained lazy-loaded and no budgets warned.
 
 ## Next step
 
-Research current primary-source SEO/social requirements for CA-7, then delegate the exact metadata, structured-data, discovery-file, preview-media, and accessible social-link implementation.
+Deploy the repository and perform live-only checks: open the Netlify URL, verify `/robots.txt`, `/sitemap.xml`, and `/cafe-artesano-social.jpg`, then run Google Rich Results Test and Facebook Sharing Debugger. Replace every temporary absolute URL together when a custom domain is adopted.
