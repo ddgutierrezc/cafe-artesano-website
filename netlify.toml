@@ -1,0 +1,9 @@
+[build]
+  base = "cafe-artesano"
+  command = "npm run build"
+  publish = "dist/cafe-artesano/browser"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
