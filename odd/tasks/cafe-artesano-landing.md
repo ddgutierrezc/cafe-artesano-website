@@ -152,7 +152,10 @@ Estimated total: 430–650 authored changed lines, excluding existing assets.
 - Independent CA-6 reverification found no severity findings: skip-link label is 8.47:1 in both themes, all boundaries/focus exceed 3:1, blocked-storage manual choice survives later system events, 10/10 tests pass, the build is clean, and `app.css` is 3,771 bytes.
 - Parent Angular CLI MCP spot check passed after CA-6 correction: 236.94 kB initial bundle / 64.43 kB estimated transfer.
 - Newly supplied brand assets were inspected. `LOGOTIPO CA.svg` is a true path-based vector with the established green, brown, and off-white palette, so it is preferable for large-format brand display. Its full vertical lockup is too detailed for favicon/header-icon sizes; CA-5 will use or derive a compact vector mark and update the favicon separately.
+- CA-5 installed `gsap@3.15.0`, downloaded three verified local WebP hero variants (768×512, 1280×853, 1600×1067), integrated the supplied vector identity/favicon, added progressive parallax/reveals, icon-only ScrollToPlugin navigation, and 25%-visible muted video playback. Writer checks passed with 14/14 tests, clean build, and 111-byte component CSS.
+- Independent CA-5 verification found two MEDIUM gaps and two LOW refinements: literal no-JavaScript essential content was absent; tests did not exercise actual GSAP module registration/options/late-import guards; mobile/reduced-motion contexts imported GSAP before declining motion; and compact header/favicon art retained unreadably small text. CA-5 remains open for focused correction.
+- Parent verification separately confirmed the Unsplash source redirect, 2000×1335 original, official download filename identifying Juliana Barquero, and current Unsplash license page; the app serves only local derivatives.
 
 ## Next step
 
-CA-5 is ready for its bounded writer: integrate the supplied vector logo/favicon, download and document the verified Unsplash hero image, install GSAP, add parallax/scroll motion, replace scroll-top text with an accessible animated icon, and add 25%-visible muted video playback.
+Correct CA-5 with a semantic no-script essential-content fallback, real mocked GSAP integration tests, pre-import motion gating, and text-free compact header/favicon artwork. Then re-run independent verification and the parent Angular MCP spot check.

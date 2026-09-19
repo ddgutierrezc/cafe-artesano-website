@@ -4,6 +4,7 @@ import { afterNextRender, Component, computed, ElementRef, inject, OnDestroy, PL
 type Theme = 'light' | 'dark';
 
 const THEME_STORAGE_KEY = 'cafe-artesano-theme';
+const DESKTOP_MOTION_QUERY = '(min-width: 48rem) and (prefers-reduced-motion: no-preference)';
 const THEME_COLORS: Record<Theme, string> = {
   light: '#F7F8F3',
   dark: '#17110D',
@@ -31,6 +32,8 @@ export class App implements OnDestroy {
   private mediaQueryListener?: (event: MediaQueryListEvent) => void;
   private reducedMotionQuery?: MediaQueryList;
   private reducedMotionListener?: (event: MediaQueryListEvent) => void;
+  private motionQuery?: MediaQueryList;
+  private motionQueryListener?: (event: MediaQueryListEvent) => void;
   private videoObserver?: IntersectionObserver;
   private motionContext?: { revert: () => void };
   private motionMedia?: { add: (conditions: string, callback: () => void) => void; revert: () => void };
@@ -53,6 +56,9 @@ export class App implements OnDestroy {
     }
     if (this.reducedMotionQuery && this.reducedMotionListener) {
       this.reducedMotionQuery.removeEventListener('change', this.reducedMotionListener);
+    }
+    if (this.motionQuery && this.motionQueryListener) {
+      this.motionQuery.removeEventListener('change', this.motionQueryListener);
     }
     this.videoObserver?.disconnect();
     this.motionMedia?.revert();
@@ -91,23 +97,34 @@ export class App implements OnDestroy {
     this.reducedMotionQuery = typeof window.matchMedia === 'function'
       ? window.matchMedia('(prefers-reduced-motion: reduce)')
       : undefined;
+    this.motionQuery = typeof window.matchMedia === 'function'
+      ? window.matchMedia(DESKTOP_MOTION_QUERY)
+      : undefined;
     this.reducedMotionListener = (event) => {
       if (event.matches) {
         this.videoObserver?.disconnect();
         this.videoObserver = undefined;
         this.brandVideo?.nativeElement.pause();
-        this.motionMedia?.revert();
-        this.motionContext?.revert();
         return;
       }
 
       this.initializeVideoObserver();
-      void this.initializeGsap();
+    };
+    this.motionQueryListener = (event) => {
+      if (event.matches) {
+        void this.initializeGsap();
+        return;
+      }
+
+      this.scrollToTopWithGsap = undefined;
+      this.motionMedia?.revert();
+      this.motionContext?.revert();
     };
     this.reducedMotionQuery?.addEventListener('change', this.reducedMotionListener);
+    this.motionQuery?.addEventListener('change', this.motionQueryListener);
 
     this.initializeVideoObserver();
-    if (!this.reducedMotionQuery?.matches) {
+    if (this.motionQuery?.matches) {
       void this.initializeGsap();
     }
   }
@@ -143,13 +160,17 @@ export class App implements OnDestroy {
   }
 
   private async initializeGsap(): Promise<void> {
+    if (!this.isBrowser || this.isDestroyed || !this.motionQuery?.matches) {
+      return;
+    }
+
     try {
       const [{ gsap }, { ScrollToPlugin }, { ScrollTrigger }] = await Promise.all([
         import('gsap'),
         import('gsap/ScrollToPlugin'),
         import('gsap/ScrollTrigger'),
       ]);
-      if (this.isDestroyed || this.reducedMotionQuery?.matches) {
+      if (this.isDestroyed || !this.motionQuery?.matches) {
         return;
       }
 
@@ -171,7 +192,7 @@ export class App implements OnDestroy {
       const host = this.host.nativeElement;
       this.motionContext = gsap.context(() => {
         this.motionMedia = gsap.matchMedia();
-        this.motionMedia.add('(min-width: 48rem) and (prefers-reduced-motion: no-preference)', () => {
+        this.motionMedia.add(DESKTOP_MOTION_QUERY, () => {
           const heroMedia = host.querySelector<HTMLElement>('.hero-media');
           if (heroMedia) {
             gsap.to(heroMedia, {

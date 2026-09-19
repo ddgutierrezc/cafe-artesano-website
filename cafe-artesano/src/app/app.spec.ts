@@ -1,20 +1,71 @@
 import { TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
+
+const gsapMocks = vi.hoisted(() => {
+  const context = { revert: vi.fn() };
+  const media = {
+    add: vi.fn((_query: string, setup: () => void) => setup()),
+    revert: vi.fn(),
+  };
+  const gsap = {
+    context: vi.fn((setup: () => void) => {
+      setup();
+      return context;
+    }),
+    fromTo: vi.fn(),
+    matchMedia: vi.fn(() => media),
+    registerPlugin: vi.fn(),
+    to: vi.fn(),
+  };
+  const ScrollTrigger = {
+    create: vi.fn((options: { onEnter?: () => void; pin?: unknown; snap?: unknown }) => {
+      options.onEnter?.();
+      return {};
+    }),
+  };
+
+  return {
+    ScrollToPlugin: {},
+    ScrollTrigger,
+    context,
+    gsap,
+    media,
+    moduleLoads: { gsap: 0, scrollTo: 0, scrollTrigger: 0 },
+  };
+});
+
+vi.mock('gsap', () => {
+  gsapMocks.moduleLoads.gsap += 1;
+  return { gsap: gsapMocks.gsap };
+});
+vi.mock('gsap/ScrollToPlugin', () => {
+  gsapMocks.moduleLoads.scrollTo += 1;
+  return { ScrollToPlugin: gsapMocks.ScrollToPlugin };
+});
+vi.mock('gsap/ScrollTrigger', () => {
+  gsapMocks.moduleLoads.scrollTrigger += 1;
+  return { ScrollTrigger: gsapMocks.ScrollTrigger };
+});
+
 import { App } from './app';
 
 const THEME_STORAGE_KEY = 'cafe-artesano-theme';
+const DESKTOP_MOTION_QUERY = '(min-width: 48rem) and (prefers-reduced-motion: no-preference)';
 
 describe('App', () => {
   let systemThemeListener: ((event: MediaQueryListEvent) => void) | undefined;
+  let motionQueryListener: ((event: MediaQueryListEvent) => void) | undefined;
   let localStorageDescriptor: PropertyDescriptor | undefined;
   let matchMediaDescriptor: PropertyDescriptor | undefined;
   let intersectionObserverDescriptor: PropertyDescriptor | undefined;
   let themeColorMeta: HTMLMetaElement;
+  let desktopMotionMatches = false;
   let reducedMotionMatches = false;
   let observerCallback: IntersectionObserverCallback | undefined;
   let observer: Pick<IntersectionObserver, 'observe' | 'disconnect'> | undefined;
 
   beforeEach(async () => {
+    vi.clearAllMocks();
     localStorageDescriptor = Object.getOwnPropertyDescriptor(window, 'localStorage');
     matchMediaDescriptor = Object.getOwnPropertyDescriptor(window, 'matchMedia');
     intersectionObserverDescriptor = Object.getOwnPropertyDescriptor(window, 'IntersectionObserver');
@@ -27,7 +78,9 @@ describe('App', () => {
     localStorage.clear();
     document.documentElement.removeAttribute('data-theme');
     document.documentElement.style.removeProperty('color-scheme');
+    desktopMotionMatches = false;
     reducedMotionMatches = false;
+    motionQueryListener = undefined;
     observerCallback = undefined;
     observer = undefined;
     setSystemTheme(false);
@@ -83,10 +136,26 @@ describe('App', () => {
       addEventListener: vi.fn(),
       removeEventListener: vi.fn(),
     } as unknown as MediaQueryList;
+    const desktopMotionQuery = {
+      get matches() {
+        return desktopMotionMatches;
+      },
+      addEventListener: vi.fn((event: string, listener: (change: MediaQueryListEvent) => void) => {
+        if (event === 'change') {
+          motionQueryListener = listener;
+        }
+      }),
+      removeEventListener: vi.fn(),
+    } as unknown as MediaQueryList;
 
     Object.defineProperty(window, 'matchMedia', {
       configurable: true,
-      value: vi.fn((query: string) => query.includes('prefers-reduced-motion') ? reducedMotionQuery : colorSchemeQuery),
+      value: vi.fn((query: string) => {
+        if (query === DESKTOP_MOTION_QUERY) {
+          return desktopMotionQuery;
+        }
+        return query.includes('prefers-reduced-motion') ? reducedMotionQuery : colorSchemeQuery;
+      }),
     });
   }
 
@@ -151,12 +220,8 @@ describe('App', () => {
     expect(phoneLinks.some((link) => link.textContent?.includes('Hablemos de café'))).toBe(true);
     expect(phoneLinks.some((link) => link.textContent?.includes('Llámenos'))).toBe(true);
     expect(phoneLinks.some((link) => link.textContent?.includes('7160-6734'))).toBe(true);
-
-    const retiredDisplay = ['7160', '6164'].join('-');
-    const retiredUri = `tel:+506${['7160', '6164'].join('')}`;
-
-    expect(page.innerHTML).not.toContain(retiredDisplay);
-    expect(page.innerHTML).not.toContain(retiredUri);
+    expect(page.innerHTML).not.toContain(['7160', '6164'].join('-'));
+    expect(page.innerHTML).not.toContain(`tel:+506${['7160', '6164'].join('')}`);
     expect(page.textContent).toContain('Palmichal de Acosta');
   });
 
@@ -168,13 +233,13 @@ describe('App', () => {
     expect(primaryCtas.map((cta) => cta.textContent?.trim())).toEqual(['Llámenos', 'Hablemos de café']);
   });
 
-  it('uses optimized local imagery, a compact header monogram, and the full hero lockup', () => {
+  it('uses optimized local hero media, a text-free compact header mark, and the full hero lockup', () => {
     const page = createPage();
     const images = Array.from(page.querySelectorAll<HTMLImageElement>('img[ngsrc]'));
     const heroImage = page.querySelector<HTMLImageElement>('img[ngsrc="hero_cafe_cerezas_fpsb7jo8nhk-768.webp"]');
+    const headerMark = page.querySelector<HTMLImageElement>('header img[src="favicon.svg"]');
 
     expect(images.map((image) => image.getAttribute('ngsrc'))).toEqual([
-      'logo.jpg',
       'hero_cafe_cerezas_fpsb7jo8nhk-768.webp',
       'banner_principal.jpg',
       'banner_secundario.jpg',
@@ -183,7 +248,9 @@ describe('App', () => {
     expect(heroImage?.parentElement?.tagName).toBe('PICTURE');
     expect(heroImage?.getAttribute('srcset')).toContain('hero_cafe_cerezas_fpsb7jo8nhk.webp 1600w');
     expect(heroImage?.hasAttribute('priority')).toBe(true);
-    expect(page.querySelector<HTMLImageElement>('header img[ngsrc="logo.jpg"]')?.alt).toContain('Monograma');
+    expect(headerMark?.width).toBe(64);
+    expect(headerMark?.height).toBe(64);
+    expect(headerMark?.alt).toContain('Monograma floral');
     expect(page.querySelector<HTMLImageElement>('img[src="LOGOTIPO CA.svg"]')?.alt).toContain('Logotipo completo');
   });
 
@@ -212,6 +279,86 @@ describe('App', () => {
     expect(control?.querySelector('svg[aria-hidden="true"]')).toBeTruthy();
   });
 
+  it('does not import GSAP modules on mobile or under reduced motion', async () => {
+    const mobileFixture = createFixture();
+    await settleBrowserEnhancements();
+    mobileFixture.destroy();
+
+    expect(gsapMocks.moduleLoads).toEqual({ gsap: 0, scrollTo: 0, scrollTrigger: 0 });
+    expect(gsapMocks.gsap.context).not.toHaveBeenCalled();
+
+    reducedMotionMatches = true;
+    desktopMotionMatches = false;
+    const reducedFixture = createFixture();
+    await settleBrowserEnhancements();
+
+    expect(gsapMocks.moduleLoads).toEqual({ gsap: 0, scrollTo: 0, scrollTrigger: 0 });
+    expect(gsapMocks.gsap.context).not.toHaveBeenCalled();
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => undefined);
+    reducedFixture.componentInstance.scrollToTop({ preventDefault: vi.fn() } as unknown as Event);
+    expect(scrollTo).toHaveBeenCalledWith({ top: 0, left: 0, behavior: 'auto' });
+    reducedFixture.destroy();
+  });
+
+  it('guards a late GSAP import after component destruction', async () => {
+    const fixture = createFixture();
+    const component = fixture.componentInstance as unknown as {
+      initializeGsap: () => Promise<void>;
+      motionQuery: MediaQueryList;
+    };
+    component.motionQuery = {
+      matches: true,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    } as unknown as MediaQueryList;
+    const initialization = component.initializeGsap();
+    fixture.destroy();
+    await initialization;
+
+    expect(gsapMocks.gsap.registerPlugin).not.toHaveBeenCalled();
+    expect(gsapMocks.gsap.context).not.toHaveBeenCalled();
+    expect(gsapMocks.ScrollTrigger.create).not.toHaveBeenCalled();
+  });
+
+  it('runs real GSAP module mocks only for eligible desktop motion and cleans up their scopes', async () => {
+    desktopMotionMatches = true;
+    const fixture = createFixture();
+    await settleBrowserEnhancements();
+
+    expect(gsapMocks.moduleLoads).toEqual({ gsap: 1, scrollTo: 1, scrollTrigger: 1 });
+    expect(gsapMocks.gsap.registerPlugin).toHaveBeenCalledWith(gsapMocks.ScrollTrigger, gsapMocks.ScrollToPlugin);
+    expect(gsapMocks.gsap.context).toHaveBeenCalledWith(expect.any(Function), fixture.nativeElement);
+    expect(gsapMocks.gsap.matchMedia).toHaveBeenCalledTimes(1);
+    expect(gsapMocks.media.add).toHaveBeenCalledWith(DESKTOP_MOTION_QUERY, expect.any(Function));
+
+    const parallax = gsapMocks.gsap.to.mock.calls.find(([, options]) => options.yPercent === -3);
+    expect(parallax?.[1]).toMatchObject({
+      ease: 'none',
+      yPercent: -3,
+      scrollTrigger: { start: 'top bottom', end: 'bottom top', scrub: true },
+    });
+    expect(parallax?.[1].scrollTrigger).not.toHaveProperty('pin');
+    expect(parallax?.[1].scrollTrigger).not.toHaveProperty('snap');
+    expect(gsapMocks.ScrollTrigger.create).toHaveBeenCalled();
+    expect(gsapMocks.ScrollTrigger.create.mock.calls.every(([options]) => (
+      options.pin === undefined && options.snap === undefined
+    ))).toBe(true);
+    expect(gsapMocks.gsap.fromTo).toHaveBeenCalledWith(
+      expect.any(HTMLElement),
+      { opacity: 0.9, yPercent: 2 },
+      expect.objectContaining({ opacity: 1, yPercent: 0 }),
+    );
+
+    fixture.componentInstance.scrollToTop({ preventDefault: vi.fn() } as unknown as Event);
+    expect(gsapMocks.gsap.to).toHaveBeenCalledWith(window, expect.objectContaining({
+      scrollTo: { y: 0, autoKill: true },
+    }));
+
+    fixture.destroy();
+    expect(gsapMocks.media.revert).toHaveBeenCalledTimes(1);
+    expect(gsapMocks.context.revert).toHaveBeenCalledTimes(1);
+  });
+
   it('starts and pauses muted video at the 25% visibility threshold and absorbs rejected playback', async () => {
     const constructor = mockIntersectionObserver();
     const fixture = createFixture();
@@ -232,35 +379,14 @@ describe('App', () => {
     expect(pause).toHaveBeenCalledTimes(1);
   });
 
-  it('does not auto-play under reduced motion and uses immediate scroll fallback', async () => {
-    reducedMotionMatches = true;
-    const constructor = mockIntersectionObserver();
-    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => undefined);
-    const fixture = createFixture();
-    await settleBrowserEnhancements();
-
-    fixture.componentInstance.scrollToTop({ preventDefault: vi.fn() } as unknown as Event);
-
-    expect(constructor).not.toHaveBeenCalled();
-    expect(scrollTo).toHaveBeenCalledWith({ top: 0, left: 0, behavior: 'auto' });
-  });
-
-  it('disconnects the video observer and reverts GSAP-owned hooks on destruction', async () => {
+  it('disconnects the actual video observer on destruction', async () => {
     mockIntersectionObserver();
     const fixture = createFixture();
     await settleBrowserEnhancements();
-    const context = { revert: vi.fn() };
-    const media = { add: vi.fn(), revert: vi.fn() };
-    Object.assign(fixture.componentInstance as unknown as object, {
-      motionContext: context,
-      motionMedia: media,
-    });
 
     fixture.destroy();
 
     expect(observer?.disconnect).toHaveBeenCalledTimes(1);
-    expect(media.revert).toHaveBeenCalledTimes(1);
-    expect(context.revert).toHaveBeenCalledTimes(1);
   });
 
   it('initializes from a stored choice before the system preference', () => {
