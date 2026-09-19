@@ -21,6 +21,7 @@ export class App implements OnDestroy {
   @ViewChild('brandVideo') private brandVideo?: ElementRef<HTMLVideoElement>;
 
   readonly theme = signal<Theme>('light');
+  readonly isScrollTopVisible = signal(false);
   readonly themeToggleLabel = computed(() => this.theme() === 'dark'
     ? 'Activar tema claro (tema oscuro activo)'
     : 'Activar tema oscuro (tema claro activo)');
@@ -38,6 +39,11 @@ export class App implements OnDestroy {
   private motionContext?: { revert: () => void };
   private motionMedia?: { add: (conditions: string, callback: () => void) => void; revert: () => void };
   private scrollToTopWithGsap?: () => void;
+  private scrollToTopVisibilityWithGsap?: (visible: boolean) => void;
+  private scrollProgressListener?: () => void;
+  private scrollProgressResizeListener?: () => void;
+  private scrollProgressResizeObserver?: ResizeObserver;
+  private scrollProgressFrame?: number;
   private hasSessionThemeOverride = false;
   private hasInitializedVideoMute = false;
   private isDestroyed = false;
@@ -61,6 +67,17 @@ export class App implements OnDestroy {
       this.motionQuery.removeEventListener('change', this.motionQueryListener);
     }
     this.videoObserver?.disconnect();
+    if (this.scrollProgressListener) {
+      window.removeEventListener('scroll', this.scrollProgressListener);
+    }
+    if (this.scrollProgressResizeListener) {
+      window.removeEventListener('resize', this.scrollProgressResizeListener);
+    }
+    if (this.scrollProgressFrame !== undefined) {
+      window.cancelAnimationFrame(this.scrollProgressFrame);
+    }
+    this.scrollProgressResizeObserver?.disconnect();
+    this.resetScrollTopControlMotion();
     this.motionMedia?.revert();
     this.motionContext?.revert();
   }
@@ -80,6 +97,9 @@ export class App implements OnDestroy {
 
   scrollToTop(event: Event): void {
     event.preventDefault();
+    if (!this.isScrollTopVisible()) {
+      return;
+    }
 
     if (!this.isBrowser || this.reducedMotionQuery?.matches || !this.scrollToTopWithGsap) {
       this.scrollImmediately();
@@ -117,6 +137,8 @@ export class App implements OnDestroy {
       }
 
       this.scrollToTopWithGsap = undefined;
+      this.scrollToTopVisibilityWithGsap = undefined;
+      this.resetScrollTopControlMotion();
       this.motionMedia?.revert();
       this.motionContext?.revert();
     };
@@ -124,6 +146,7 @@ export class App implements OnDestroy {
     this.motionQuery?.addEventListener('change', this.motionQueryListener);
 
     this.initializeVideoObserver();
+    this.initializeScrollToTopVisibility();
     if (this.motionQuery?.matches) {
       void this.initializeGsap();
     }
@@ -186,6 +209,19 @@ export class App implements OnDestroy {
           scrollTo: { y: 0, autoKill: true },
         });
       };
+      this.scrollToTopVisibilityWithGsap = (visible) => {
+        const control = this.host.nativeElement.querySelector<HTMLElement>('.scroll-top-control');
+        if (control) {
+          gsap.to(control, {
+            autoAlpha: visible ? 1 : 0,
+            duration: 0.24,
+            ease: 'power2.out',
+            overwrite: 'auto',
+            scale: visible ? 1 : 0.96,
+            y: visible ? 0 : 12,
+          });
+        }
+      };
 
       this.motionMedia?.revert();
       this.motionContext?.revert();
@@ -193,17 +229,28 @@ export class App implements OnDestroy {
       this.motionContext = gsap.context(() => {
         this.motionMedia = gsap.matchMedia();
         this.motionMedia.add(DESKTOP_MOTION_QUERY, () => {
-          const heroMedia = host.querySelector<HTMLElement>('.hero-media');
-          if (heroMedia) {
-            gsap.to(heroMedia, {
+          const heroImage = host.querySelector<HTMLElement>('.hero-parallax-image');
+          if (heroImage) {
+            gsap.fromTo(heroImage, { yPercent: 5 }, {
               ease: 'none',
-              yPercent: -3,
+              yPercent: -5,
               scrollTrigger: {
-                trigger: heroMedia,
+                trigger: heroImage,
                 start: 'top bottom',
                 end: 'bottom top',
-                scrub: true,
+                scrub: 0.6,
               },
+            });
+          }
+
+          const heroEntrance = Array.from(host.querySelectorAll<HTMLElement>('.hero-entrance'));
+          if (heroEntrance.length) {
+            gsap.fromTo(heroEntrance, { opacity: 0.2, y: 36 }, {
+              duration: 0.82,
+              ease: 'power3.out',
+              opacity: 1,
+              stagger: 0.1,
+              y: 0,
             });
           }
 
@@ -213,12 +260,12 @@ export class App implements OnDestroy {
               start: 'top 88%',
               once: true,
               onEnter: () => {
-                gsap.fromTo(element, { opacity: 0.9, yPercent: 2 }, {
-                  duration: 0.45,
+                gsap.fromTo(element, { opacity: 0.45, y: 40 }, {
+                  duration: 0.75,
                   ease: 'power2.out',
                   opacity: 1,
                   overwrite: 'auto',
-                  yPercent: 0,
+                  y: 0,
                 });
               },
             });
@@ -228,6 +275,43 @@ export class App implements OnDestroy {
     } catch {
       // The page retains native anchors and immediate scrolling when GSAP cannot load.
     }
+  }
+
+  private initializeScrollToTopVisibility(): void {
+    this.scrollProgressListener = () => this.requestScrollTopVisibilityUpdate();
+    this.scrollProgressResizeListener = () => this.requestScrollTopVisibilityUpdate();
+    window.addEventListener('scroll', this.scrollProgressListener, { passive: true });
+    window.addEventListener('resize', this.scrollProgressResizeListener);
+
+    if ('ResizeObserver' in window) {
+      this.scrollProgressResizeObserver = new ResizeObserver(() => this.requestScrollTopVisibilityUpdate());
+      this.scrollProgressResizeObserver.observe(this.document.documentElement);
+    }
+
+    this.requestScrollTopVisibilityUpdate();
+  }
+
+  private requestScrollTopVisibilityUpdate(): void {
+    if (this.scrollProgressFrame !== undefined) {
+      return;
+    }
+
+    this.scrollProgressFrame = window.requestAnimationFrame(() => {
+      this.scrollProgressFrame = undefined;
+      const scrollableDistance = this.document.documentElement.scrollHeight - window.innerHeight;
+      const visible = scrollableDistance > 0 && window.scrollY / scrollableDistance >= 0.10;
+      if (visible !== this.isScrollTopVisible()) {
+        this.isScrollTopVisible.set(visible);
+        this.scrollToTopVisibilityWithGsap?.(visible);
+      }
+    });
+  }
+
+  private resetScrollTopControlMotion(): void {
+    const control = this.host.nativeElement.querySelector<HTMLElement>('.scroll-top-control');
+    control?.style.removeProperty('opacity');
+    control?.style.removeProperty('transform');
+    control?.style.removeProperty('visibility');
   }
 
   private scrollImmediately(): void {

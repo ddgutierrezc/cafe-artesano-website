@@ -24,26 +24,61 @@ const gsapMocks = vi.hoisted(() => {
     }),
   };
 
+  let deferModuleImports = false;
+  let moduleImportsStarted: Promise<void> = Promise.resolve();
+  let resolveModuleImportsStarted: (() => void) | undefined;
+  let pendingModuleImportResolvers: Array<() => void> = [];
+
+  const resetDeferredModuleImports = () => {
+    deferModuleImports = false;
+    pendingModuleImportResolvers = [];
+    moduleImportsStarted = new Promise((resolve) => {
+      resolveModuleImportsStarted = resolve;
+    });
+  };
+  const waitForModuleImport = () => {
+    if (!deferModuleImports) {
+      return Promise.resolve();
+    }
+
+    return new Promise<void>((resolve) => {
+      pendingModuleImportResolvers.push(resolve);
+      if (pendingModuleImportResolvers.length === 3) {
+        resolveModuleImportsStarted?.();
+      }
+    });
+  };
+
   return {
     ScrollToPlugin: {},
     ScrollTrigger,
     context,
+    defer: () => {
+      deferModuleImports = true;
+    },
     gsap,
     media,
+    moduleImportsStarted: () => moduleImportsStarted,
     moduleLoads: { gsap: 0, scrollTo: 0, scrollTrigger: 0 },
+    releaseDeferredModuleImports: () => pendingModuleImportResolvers.splice(0).forEach((resolve) => resolve()),
+    resetDeferredModuleImports,
+    waitForModuleImport,
   };
 });
 
-vi.mock('gsap', () => {
+vi.mock('gsap', async () => {
   gsapMocks.moduleLoads.gsap += 1;
+  await gsapMocks.waitForModuleImport();
   return { gsap: gsapMocks.gsap };
 });
-vi.mock('gsap/ScrollToPlugin', () => {
+vi.mock('gsap/ScrollToPlugin', async () => {
   gsapMocks.moduleLoads.scrollTo += 1;
+  await gsapMocks.waitForModuleImport();
   return { ScrollToPlugin: gsapMocks.ScrollToPlugin };
 });
-vi.mock('gsap/ScrollTrigger', () => {
+vi.mock('gsap/ScrollTrigger', async () => {
   gsapMocks.moduleLoads.scrollTrigger += 1;
+  await gsapMocks.waitForModuleImport();
   return { ScrollTrigger: gsapMocks.ScrollTrigger };
 });
 
@@ -58,17 +93,47 @@ describe('App', () => {
   let localStorageDescriptor: PropertyDescriptor | undefined;
   let matchMediaDescriptor: PropertyDescriptor | undefined;
   let intersectionObserverDescriptor: PropertyDescriptor | undefined;
+  let resizeObserverDescriptor: PropertyDescriptor | undefined;
+  let requestAnimationFrameDescriptor: PropertyDescriptor | undefined;
+  let cancelAnimationFrameDescriptor: PropertyDescriptor | undefined;
+  let scrollYDescriptor: PropertyDescriptor | undefined;
+  let innerHeightDescriptor: PropertyDescriptor | undefined;
+  let scrollHeightDescriptor: PropertyDescriptor | undefined;
   let themeColorMeta: HTMLMetaElement;
   let desktopMotionMatches = false;
+  let nextAnimationFrame = 0;
+  const animationFrames = new Map<number, FrameRequestCallback>();
   let reducedMotionMatches = false;
   let observerCallback: IntersectionObserverCallback | undefined;
   let observer: Pick<IntersectionObserver, 'observe' | 'disconnect'> | undefined;
 
   beforeEach(async () => {
     vi.clearAllMocks();
+    gsapMocks.resetDeferredModuleImports();
     localStorageDescriptor = Object.getOwnPropertyDescriptor(window, 'localStorage');
     matchMediaDescriptor = Object.getOwnPropertyDescriptor(window, 'matchMedia');
     intersectionObserverDescriptor = Object.getOwnPropertyDescriptor(window, 'IntersectionObserver');
+    resizeObserverDescriptor = Object.getOwnPropertyDescriptor(window, 'ResizeObserver');
+    requestAnimationFrameDescriptor = Object.getOwnPropertyDescriptor(window, 'requestAnimationFrame');
+    cancelAnimationFrameDescriptor = Object.getOwnPropertyDescriptor(window, 'cancelAnimationFrame');
+    scrollYDescriptor = Object.getOwnPropertyDescriptor(window, 'scrollY');
+    innerHeightDescriptor = Object.getOwnPropertyDescriptor(window, 'innerHeight');
+    scrollHeightDescriptor = Object.getOwnPropertyDescriptor(document.documentElement, 'scrollHeight');
+    nextAnimationFrame = 0;
+    animationFrames.clear();
+    Object.defineProperty(window, 'requestAnimationFrame', {
+      configurable: true,
+      value: vi.fn((callback: FrameRequestCallback) => {
+        const frame = ++nextAnimationFrame;
+        animationFrames.set(frame, callback);
+        return frame;
+      }),
+    });
+    Object.defineProperty(window, 'cancelAnimationFrame', {
+      configurable: true,
+      value: vi.fn((frame: number) => animationFrames.delete(frame)),
+    });
+    setScrollMetrics(0);
     themeColorMeta = document.querySelector('meta[name="theme-color"]') ?? document.createElement('meta');
     themeColorMeta.setAttribute('name', 'theme-color');
     themeColorMeta.setAttribute('content', '#F7F8F3');
@@ -107,7 +172,41 @@ describe('App', () => {
     } else {
       delete (window as unknown as { IntersectionObserver?: typeof IntersectionObserver }).IntersectionObserver;
     }
+    if (resizeObserverDescriptor) {
+      Object.defineProperty(window, 'ResizeObserver', resizeObserverDescriptor);
+    } else {
+      delete (window as unknown as { ResizeObserver?: typeof ResizeObserver }).ResizeObserver;
+    }
+    restoreWindowProperty('requestAnimationFrame', requestAnimationFrameDescriptor);
+    restoreWindowProperty('cancelAnimationFrame', cancelAnimationFrameDescriptor);
+    restoreWindowProperty('scrollY', scrollYDescriptor);
+    restoreWindowProperty('innerHeight', innerHeightDescriptor);
+    if (scrollHeightDescriptor) {
+      Object.defineProperty(document.documentElement, 'scrollHeight', scrollHeightDescriptor);
+    } else {
+      delete (document.documentElement as { scrollHeight?: number }).scrollHeight;
+    }
   });
+
+  function restoreWindowProperty(name: keyof Window, descriptor: PropertyDescriptor | undefined): void {
+    if (descriptor) {
+      Object.defineProperty(window, name, descriptor);
+    } else {
+      delete (window as Partial<Window>)[name];
+    }
+  }
+
+  function setScrollMetrics(scrollY: number, scrollHeight = 10_000, innerHeight = 1_000): void {
+    Object.defineProperty(window, 'scrollY', { configurable: true, value: scrollY });
+    Object.defineProperty(window, 'innerHeight', { configurable: true, value: innerHeight });
+    Object.defineProperty(document.documentElement, 'scrollHeight', { configurable: true, value: scrollHeight });
+  }
+
+  function flushAnimationFrames(): void {
+    const frames = Array.from(animationFrames.entries());
+    animationFrames.clear();
+    frames.forEach(([, callback]) => callback(0));
+  }
 
   function blockStorage(): void {
     Object.defineProperty(window, 'localStorage', {
@@ -283,16 +382,151 @@ describe('App', () => {
     expect(page.querySelector('#video-description')?.textContent).toContain('Palmichal de Acosta');
   });
 
-  it('uses an icon-only 44px scroll-top control with a Spanish accessible name', () => {
-    const page = createPage();
-    const control = page.querySelector<HTMLButtonElement>('button.scroll-top-control');
+  it('keeps the icon-only scroll-top control hidden, disabled, and out of keyboard and accessibility navigation at 9.9%', async () => {
+    setScrollMetrics(891);
+    const fixture = createFixture();
+    await settleBrowserEnhancements();
+    flushAnimationFrames();
+    fixture.detectChanges();
+    const control = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('button.scroll-top-control');
 
     expect(control?.getAttribute('aria-label')).toBe('Volver al inicio');
     expect(control?.getAttribute('title')).toBe('Volver al inicio');
-    expect(control?.className).toContain('min-h-11');
-    expect(control?.className).toContain('min-w-11');
+    expect(control?.className).toContain('h-11');
+    expect(control?.className).toContain('w-11');
+    expect(control?.className).not.toContain('min-h-11');
+    expect(control?.className).not.toContain('min-w-11');
     expect(control?.textContent?.trim()).toBe('');
-    expect(control?.querySelector('svg[aria-hidden="true"]')).toBeTruthy();
+    const icon = control?.querySelector<SVGElement>('svg[aria-hidden="true"]');
+    expect(icon).toBeTruthy();
+    expect(icon?.classList.contains('h-5')).toBe(true);
+    expect(icon?.classList.contains('w-5')).toBe(true);
+    expect(control?.disabled).toBe(true);
+    expect(control?.getAttribute('aria-hidden')).toBe('true');
+    expect(control?.getAttribute('tabindex')).toBe('-1');
+    expect(control?.classList.contains('scroll-top-control--visible')).toBe(false);
+  });
+
+  it('shows the scroll-top control at exactly 10%, remains visible above it, and hides it when progress returns to 9.9%', async () => {
+    setScrollMetrics(891);
+    const fixture = createFixture();
+    await settleBrowserEnhancements();
+    flushAnimationFrames();
+    const control = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('button.scroll-top-control')!;
+
+    setScrollMetrics(900);
+    window.dispatchEvent(new Event('scroll'));
+    flushAnimationFrames();
+    fixture.detectChanges();
+    expect(control.disabled).toBe(false);
+    expect(control.getAttribute('aria-hidden')).toBeNull();
+    expect(control.getAttribute('tabindex')).toBeNull();
+    expect(control.classList.contains('scroll-top-control--visible')).toBe(true);
+
+    setScrollMetrics(901);
+    window.dispatchEvent(new Event('scroll'));
+    flushAnimationFrames();
+    fixture.detectChanges();
+    expect(control.disabled).toBe(false);
+
+    setScrollMetrics(891);
+    window.dispatchEvent(new Event('scroll'));
+    flushAnimationFrames();
+    fixture.detectChanges();
+    expect(control.disabled).toBe(true);
+    expect(control.getAttribute('aria-hidden')).toBe('true');
+    expect(control.getAttribute('tabindex')).toBe('-1');
+    expect(control.classList.contains('scroll-top-control--visible')).toBe(false);
+  });
+
+  it('keeps the scroll-top control hidden on non-scrollable pages despite positive synthetic scroll positions', async () => {
+    setScrollMetrics(120, 1_000, 1_000);
+    const fixture = createFixture();
+    await settleBrowserEnhancements();
+    flushAnimationFrames();
+    fixture.detectChanges();
+    const control = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('button.scroll-top-control')!;
+
+    expect(control.disabled).toBe(true);
+    expect(control.getAttribute('aria-hidden')).toBe('true');
+    expect(control.getAttribute('tabindex')).toBe('-1');
+  });
+
+  it('coalesces repeated scroll and resize events into one pending animation frame', async () => {
+    const fixture = createFixture();
+    await settleBrowserEnhancements();
+    flushAnimationFrames();
+    const frameBeforeEvents = nextAnimationFrame;
+
+    window.dispatchEvent(new Event('scroll'));
+    window.dispatchEvent(new Event('scroll'));
+    window.dispatchEvent(new Event('resize'));
+    window.dispatchEvent(new Event('resize'));
+
+    expect(nextAnimationFrame).toBe(frameBeforeEvents + 1);
+    expect(animationFrames.size).toBe(1);
+    flushAnimationFrames();
+    fixture.destroy();
+  });
+
+  it('recalculates scroll-top visibility after a resize changes the scrollable distance', async () => {
+    setScrollMetrics(900);
+    const fixture = createFixture();
+    await settleBrowserEnhancements();
+    flushAnimationFrames();
+    fixture.detectChanges();
+    const control = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('button.scroll-top-control')!;
+    expect(control.disabled).toBe(false);
+
+    setScrollMetrics(900, 10_100);
+    window.dispatchEvent(new Event('resize'));
+    flushAnimationFrames();
+    fixture.detectChanges();
+
+    expect(control.disabled).toBe(true);
+    expect(control.getAttribute('aria-hidden')).toBe('true');
+  });
+
+  it('uses a passive scroll listener, observes document-height changes, and cleans up listeners, frames, and the observer', async () => {
+    let resizeObserverCallback: ResizeObserverCallback | undefined;
+    const observe = vi.fn();
+    const disconnect = vi.fn();
+    class MockResizeObserver {
+      constructor(callback: ResizeObserverCallback) {
+        resizeObserverCallback = callback;
+      }
+
+      readonly observe = observe;
+      readonly disconnect = disconnect;
+    }
+    Object.defineProperty(window, 'ResizeObserver', { configurable: true, value: MockResizeObserver });
+    const addEventListener = vi.spyOn(window, 'addEventListener');
+    const removeEventListener = vi.spyOn(window, 'removeEventListener');
+    setScrollMetrics(900);
+    const fixture = createFixture();
+    await settleBrowserEnhancements();
+    flushAnimationFrames();
+    fixture.detectChanges();
+    const control = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('.scroll-top-control')!;
+
+    expect(addEventListener).toHaveBeenCalledWith('scroll', expect.any(Function), { passive: true });
+    expect(observe).toHaveBeenCalledWith(document.documentElement);
+    expect(control.disabled).toBe(false);
+
+    setScrollMetrics(900, 10_100);
+    resizeObserverCallback?.([], {} as ResizeObserver);
+    flushAnimationFrames();
+    fixture.detectChanges();
+    expect(control.disabled).toBe(true);
+
+    window.dispatchEvent(new Event('scroll'));
+    const pendingFrame = nextAnimationFrame;
+    fixture.destroy();
+
+    expect(removeEventListener).toHaveBeenCalledWith('scroll', expect.any(Function));
+    expect(removeEventListener).toHaveBeenCalledWith('resize', expect.any(Function));
+    expect(window.cancelAnimationFrame).toHaveBeenCalledWith(pendingFrame);
+    expect(disconnect).toHaveBeenCalledTimes(1);
   });
 
   it('does not import GSAP modules on mobile or under reduced motion', async () => {
@@ -310,30 +544,34 @@ describe('App', () => {
 
     expect(gsapMocks.moduleLoads).toEqual({ gsap: 0, scrollTo: 0, scrollTrigger: 0 });
     expect(gsapMocks.gsap.context).not.toHaveBeenCalled();
+    setScrollMetrics(900);
+    window.dispatchEvent(new Event('scroll'));
+    flushAnimationFrames();
+    reducedFixture.detectChanges();
     const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => undefined);
     reducedFixture.componentInstance.scrollToTop({ preventDefault: vi.fn() } as unknown as Event);
     expect(scrollTo).toHaveBeenCalledWith({ top: 0, left: 0, behavior: 'auto' });
     reducedFixture.destroy();
   });
 
-  it('guards a late GSAP import after component destruction', async () => {
+  it('ignores deferred GSAP imports that resolve after normal fixture destruction without creating motion scopes', async () => {
+    gsapMocks.defer();
+    desktopMotionMatches = true;
     const fixture = createFixture();
-    const component = fixture.componentInstance as unknown as {
-      initializeGsap: () => Promise<void>;
-      motionQuery: MediaQueryList;
-    };
-    component.motionQuery = {
-      matches: true,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-    } as unknown as MediaQueryList;
-    const initialization = component.initializeGsap();
-    fixture.destroy();
-    await initialization;
+    await settleBrowserEnhancements();
+    await gsapMocks.moduleImportsStarted();
 
+    fixture.destroy();
+    gsapMocks.releaseDeferredModuleImports();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(gsapMocks.moduleLoads).toEqual({ gsap: 1, scrollTo: 1, scrollTrigger: 1 });
     expect(gsapMocks.gsap.registerPlugin).not.toHaveBeenCalled();
     expect(gsapMocks.gsap.context).not.toHaveBeenCalled();
+    expect(gsapMocks.gsap.matchMedia).not.toHaveBeenCalled();
     expect(gsapMocks.ScrollTrigger.create).not.toHaveBeenCalled();
+    expect(gsapMocks.gsap.to).not.toHaveBeenCalled();
   });
 
   it('runs real GSAP module mocks only for eligible desktop motion and cleans up their scopes', async () => {
@@ -347,24 +585,61 @@ describe('App', () => {
     expect(gsapMocks.gsap.matchMedia).toHaveBeenCalledTimes(1);
     expect(gsapMocks.media.add).toHaveBeenCalledWith(DESKTOP_MOTION_QUERY, expect.any(Function));
 
-    const parallax = gsapMocks.gsap.to.mock.calls.find(([, options]) => options.yPercent === -3);
-    expect(parallax?.[1]).toMatchObject({
+    const parallax = gsapMocks.gsap.fromTo.mock.calls.find(([, from, to]) => (
+      from.yPercent === 5 && to.yPercent === -5
+    ));
+    expect(parallax?.[1]).toEqual({ yPercent: 5 });
+    expect(parallax?.[2]).toMatchObject({
       ease: 'none',
-      yPercent: -3,
-      scrollTrigger: { start: 'top bottom', end: 'bottom top', scrub: true },
+      yPercent: -5,
+      scrollTrigger: { start: 'top bottom', end: 'bottom top', scrub: 0.6 },
     });
-    expect(parallax?.[1].scrollTrigger).not.toHaveProperty('pin');
-    expect(parallax?.[1].scrollTrigger).not.toHaveProperty('snap');
+    expect(parallax?.[2].scrollTrigger).not.toHaveProperty('pin');
+    expect(parallax?.[2].scrollTrigger).not.toHaveProperty('snap');
     expect(gsapMocks.ScrollTrigger.create).toHaveBeenCalled();
     expect(gsapMocks.ScrollTrigger.create.mock.calls.every(([options]) => (
       options.pin === undefined && options.snap === undefined
     ))).toBe(true);
     expect(gsapMocks.gsap.fromTo).toHaveBeenCalledWith(
+      expect.any(Array),
+      { opacity: 0.2, y: 36 },
+      expect.objectContaining({ duration: 0.82, opacity: 1, stagger: 0.1, y: 0 }),
+    );
+    expect(gsapMocks.gsap.fromTo).toHaveBeenCalledWith(
       expect.any(HTMLElement),
-      { opacity: 0.9, yPercent: 2 },
-      expect.objectContaining({ opacity: 1, yPercent: 0 }),
+      { opacity: 0.45, y: 40 },
+      expect.objectContaining({ duration: 0.75, opacity: 1, y: 0 }),
     );
 
+    setScrollMetrics(900);
+    window.dispatchEvent(new Event('scroll'));
+    flushAnimationFrames();
+    fixture.detectChanges();
+    const control = (fixture.nativeElement as HTMLElement).querySelector<HTMLElement>('.scroll-top-control')!;
+    expect(gsapMocks.gsap.to).toHaveBeenCalledWith(control, expect.objectContaining({
+      autoAlpha: 1,
+      duration: 0.24,
+      overwrite: 'auto',
+      scale: 1,
+      y: 0,
+    }));
+
+    setScrollMetrics(899);
+    window.dispatchEvent(new Event('scroll'));
+    flushAnimationFrames();
+    fixture.detectChanges();
+    expect(gsapMocks.gsap.to).toHaveBeenCalledWith(control, expect.objectContaining({
+      autoAlpha: 0,
+      duration: 0.24,
+      overwrite: 'auto',
+      scale: 0.96,
+      y: 12,
+    }));
+
+    setScrollMetrics(900);
+    window.dispatchEvent(new Event('scroll'));
+    flushAnimationFrames();
+    fixture.detectChanges();
     fixture.componentInstance.scrollToTop({ preventDefault: vi.fn() } as unknown as Event);
     expect(gsapMocks.gsap.to).toHaveBeenCalledWith(window, expect.objectContaining({
       scrollTo: { y: 0, autoKill: true },

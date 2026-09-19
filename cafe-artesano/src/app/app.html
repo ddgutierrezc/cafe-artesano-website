@@ -24,23 +24,23 @@
 <main id="contenido" class="overflow-x-hidden">
   <section id="inicio" class="hero relative py-[clamp(4rem,8vw,6rem)]" aria-labelledby="hero-title">
     <div class="site-shell mx-auto grid items-center gap-8 px-5 md:grid-cols-[minmax(0,1fr)_minmax(20rem,.9fr)] md:px-8">
-      <div class="hero-copy max-w-[44rem] gsap-reveal">
-        <p class="eyebrow">Café de altura · Costa Rica</p>
-        <h1 id="hero-title">Café Artesano: origen que se disfruta en cada taza.</h1>
-        <p class="lead">
+      <div class="hero-copy max-w-[44rem]">
+        <p class="hero-entrance eyebrow">Café de altura · Costa Rica</p>
+        <h1 id="hero-title" class="hero-entrance">Café Artesano: origen que se disfruta en cada taza.</h1>
+        <p class="hero-entrance lead">
           Cultivamos y tostamos café con calma, respetando la tierra de Palmichal de Acosta y el carácter natural de cada grano.
         </p>
-        <div class="mt-8 flex flex-wrap gap-3">
+        <div class="hero-entrance mt-8 flex flex-wrap gap-3">
           <a class="cta-primary inline-flex min-h-11 items-center justify-center rounded-lg px-[1.1rem] py-2.5 text-center font-extrabold no-underline hover:-translate-y-0.5" href="tel:+50671606734">Hablemos de café</a>
           <a class="inline-flex min-h-11 items-center justify-center rounded-lg border-2 border-[var(--ca-forest)] px-[1.1rem] py-2.5 text-center font-extrabold text-[var(--ca-forest-deep)] no-underline hover:bg-[var(--ca-surface-action-hover)]" href="#origen">Conozca nuestro origen</a>
         </div>
       </div>
-      <div class="hero-visual gsap-reveal">
+      <div class="hero-entrance hero-visual">
         <div class="hero-media overflow-hidden rounded-2xl border border-[var(--ca-line)] bg-[var(--ca-surface)] shadow-card">
           <picture>
             <source media="(min-width: 80rem)" srcset="hero_cafe_cerezas_fpsb7jo8nhk.webp" type="image/webp" />
             <source media="(min-width: 48rem)" srcset="hero_cafe_cerezas_fpsb7jo8nhk-1280.webp" type="image/webp" />
-            <img class="block aspect-[2000/1335] h-auto w-full object-cover" ngSrc="hero_cafe_cerezas_fpsb7jo8nhk-768.webp" srcset="hero_cafe_cerezas_fpsb7jo8nhk-768.webp 768w, hero_cafe_cerezas_fpsb7jo8nhk-1280.webp 1280w, hero_cafe_cerezas_fpsb7jo8nhk.webp 1600w" sizes="(min-width: 80rem) 36rem, (min-width: 48rem) 42vw, calc(100vw - 2.5rem)" width="2000" height="1335" priority alt="Cerezas de café maduras entre hojas verdes" />
+            <img class="hero-parallax-image block aspect-[2000/1335] h-auto w-full scale-[1.1] object-cover" ngSrc="hero_cafe_cerezas_fpsb7jo8nhk-768.webp" srcset="hero_cafe_cerezas_fpsb7jo8nhk-768.webp 768w, hero_cafe_cerezas_fpsb7jo8nhk-1280.webp 1280w, hero_cafe_cerezas_fpsb7jo8nhk.webp 1600w" sizes="(min-width: 80rem) 36rem, (min-width: 48rem) 42vw, calc(100vw - 2.5rem)" width="2000" height="1335" priority alt="Cerezas de café maduras entre hojas verdes" />
           </picture>
         </div>
         <div class="brand-lockup mt-4 rounded-2xl border border-[var(--ca-line)] p-4 shadow-card">
@@ -138,8 +138,8 @@
 <footer class="bg-[var(--ca-footer-surface)] text-[var(--ca-on-dark)]">
   <div class="site-shell mx-auto flex min-h-20 items-center justify-between gap-4 px-5 md:px-8">
     <p class="m-0"><strong>Café Artesano</strong> · Café de Palmichal de Acosta</p>
-    <button class="scroll-top-control inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border-2 border-[var(--ca-on-dark)] bg-transparent p-2 text-[var(--ca-on-dark)]" type="button" (click)="scrollToTop($event)" aria-label="Volver al inicio" title="Volver al inicio">
-      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 19V5" /><path d="m6 11 6-6 6 6" /></svg>
+    <button class="scroll-top-control inline-flex h-11 w-11 items-center justify-center rounded-lg border-2 border-[var(--ca-on-dark)] bg-[var(--ca-footer-surface)] p-2 text-[var(--ca-on-dark)]" [class.scroll-top-control--visible]="isScrollTopVisible()" [disabled]="!isScrollTopVisible()" [attr.aria-hidden]="isScrollTopVisible() ? null : 'true'" [attr.tabindex]="isScrollTopVisible() ? null : '-1'" type="button" (click)="scrollToTop($event)" aria-label="Volver al inicio" title="Volver al inicio">
+      <svg class="h-5 w-5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 19V5" /><path d="m6 11 6-6 6 6" /></svg>
     </button>
   </div>
 </footer>

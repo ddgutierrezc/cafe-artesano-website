@@ -23,6 +23,7 @@ The Angular 22 application still shows the generated starter screen. The busines
 - Download and locally serve one suitable free/open hero media asset, retaining source and license provenance and optimizing its delivery.
 - Add system-aware light/dark themes with an accessible manual selector and persisted user preference; both themes must retain the accepted contrast targets.
 - Add production-grade technical SEO, social sharing metadata, structured data, robots/sitemap discovery, and accessible Facebook/WhatsApp links using the temporary Netlify URL.
+- Increase GSAP motion to a clearly visible cinematic treatment on eligible desktop/no-reduced-motion contexts, and show the scroll-to-top control only after 10% document progress.
 
 ## Non-goals
 
@@ -52,6 +53,7 @@ The Angular 22 application still shows the generated starter screen. The busines
 | Theme behavior | By explicit user choice, initialize from `prefers-color-scheme`, provide an accessible light/dark selector, and persist the user's override. Both themes must independently meet the accepted text and non-text contrast thresholds. |
 | Temporary canonical URL | Use `https://cafeartesanocr.netlify.app/` for canonical, Open Graph, sitemap, robots, and structured data until a custom domain is available. Replace all absolute SEO URLs together when migrating domains. |
 | Social identity | Facebook is `https://www.facebook.com/cafeartesanopalmichal`; no Instagram profile is claimed. WhatsApp uses `https://wa.me/50671606734`. Structured data describes Café Artesano as an `Organization`/coffee brand, not a physical café. |
+| Cinematic motion refinement | By explicit user choice, make GSAP motion visibly cinematic rather than subtle while preserving reduced-motion opt-out, transform/opacity-only performance, content availability, cleanup, and mobile restraint. The scroll-to-top control stays unavailable until vertical document progress reaches 10%, then enters/exits accessibly. |
 
 ## Workload forecast
 
@@ -66,6 +68,7 @@ Estimated total: 430–650 authored changed lines, excluding existing assets.
 | CA-5 | Download and integrate licensed hero media; add GSAP with restrained parallax/scroll motion, Angular lifecycle-safe cleanup, reduced-motion opt-out, and focused tests. | Research first, then delegated writer: asset, dependency, and multi-file motion integration. | 160–280 |
 | CA-6 | Add system-aware light/dark themes, accessible selector, persistence, pre-render theme bootstrap, dual-theme contrast evidence, and tests. | Delegated writer: design tokens plus multi-file behavior. Execute before CA-5 so motion controls inherit final theme tokens. | 140–240 |
 | CA-7 | Add canonical/meta/OG/Twitter metadata, Organization JSON-LD, robots.txt, sitemap.xml, social preview media, accessible Facebook/WhatsApp links, and deployment-aware SEO documentation/tests. | Delegated writer: multi-file metadata/public-assets/content integration. | 120–220 |
+| CA-8 | Increase desktop GSAP motion to a cinematic but accessible treatment and gate the scroll-to-top control at 10% document progress with tested show/hide/cleanup behavior. | Delegated writer: multi-file motion refinement. | 100–180 |
 
 ## Checklist
 
@@ -117,6 +120,14 @@ Estimated total: 430–650 authored changed lines, excluding existing assets.
   - [x] Create/use an optimized social preview image with documented dimensions and absolute URL.
   - [x] Add accessible Facebook and WhatsApp links without inventing Instagram.
   - [x] Add focused metadata/links tests and verify production output contains all discovery files.
+- [x] **CA-8 — Cinematic GSAP and 10% scroll control**
+  - [x] Add a clearly visible hero entrance sequence and section reveals using only transform/opacity.
+  - [x] Increase hero/media parallax range while preventing exposed edges, layout shifts, pinning, or snapping.
+  - [x] Keep cinematic motion desktop/no-reduced-motion only and retain safe static/mobile fallbacks.
+  - [x] Hide and disable the scroll-to-top control below 10% document progress; show/enable it at or above 10%.
+  - [x] Animate control entry/exit with GSAP when available and preserve immediate accessible fallback otherwise.
+  - [x] Test exact threshold boundaries, resize/document-height changes, keyboard availability, cleanup, and GSAP options.
+  - [x] Re-run tests, production build, independent verification, and Angular MCP spot check.
 
 ## Acceptance criteria
 
@@ -174,6 +185,12 @@ Estimated total: 430–650 authored changed lines, excluding existing assets.
 - Independent CA-7 reverification found no severity findings: 23/23 tests passed, production discovery artifacts matched source semantics, and no CA-4/5/6 regression was detected.
 - Parent Angular CLI MCP final spot check passed: 250.50 kB initial bundle / 67.71 kB estimated transfer; GSAP remained lazy-loaded and no budgets warned.
 
+- The user requested a visibly cinematic motion pass and clarified that the scroll-to-top control must appear only after 10% vertical document progress. CA-8 was added without reopening completed SEO or accessibility work.
+- CA-8 first pass added stronger hero/reveal motion and tested 10% gating, but independent verification found two MEDIUM defects: hero parallax remained one-sided (0% to -5%) instead of a true +5% to -5% range, and the fixed scroll control/icon lacked explicit 44×44px/compact SVG dimensions. LOW test gaps covered private late-import manipulation, non-scrollable pages, and RAF coalescing.
+- CA-8 correction implemented true `fromTo` +5%→-5% parallax with scale 1.1/scrub 0.6, exact 44×44px control and 20×20px icon sizing, non-scrollable-page suppression, one-RAF coalescing, and public fixture-lifecycle deferred-import coverage.
+- Independent CA-8 reverification found no functional severity findings; 28/28 tests and production build passed, cinematic hero/reveal values remained intact, and no CA-4/5/6/7 regression was detected.
+- Parent Angular CLI MCP final CA-8 spot check passed: 254.75 kB initial bundle / 68.78 kB estimated transfer; GSAP remains lazy and no budgets warned.
+
 ## Next step
 
-Deploy the repository and perform live-only checks: open the Netlify URL, verify `/robots.txt`, `/sitemap.xml`, and `/cafe-artesano-social.jpg`, then run Google Rich Results Test and Facebook Sharing Debugger. Replace every temporary absolute URL together when a custom domain is adopted.
+Redeploy the latest repository state, hard-refresh the Netlify site, and visually check cinematic motion on a viewport ≥768px with reduced motion disabled. Then verify live `/robots.txt`, `/sitemap.xml`, social image, Google Rich Results, and Facebook Sharing Debugger.
