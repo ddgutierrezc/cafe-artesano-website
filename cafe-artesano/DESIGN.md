@@ -7,7 +7,7 @@ Use this foundation to present Café Artesano as a calm, local, natural-roast co
 - **Character:** artisanal, natural, warm, and quietly confident—not rustic clutter or luxury excess.
 - **Message:** foreground coffee origin, natural roasting, and Palmichal de Acosta with clear Spanish HTML copy.
 - **Visual rhythm:** pair generous pale space with grounded coffee-brown type and restrained forest-green accents.
-- **Evidence:** the text-free `public/favicon.svg` provides the compact floral mark for the 52px header and browser chrome; the supplied path-based `public/LOGOTIPO CA.svg` provides the full brown, green, and off-white vertical lockup for large-format presentation. `banner_principal.jpg` adds plantation greens, mountains, coffee fruit, and warm product photography; `banner_secundario.jpg` reinforces pale neutrals, steam, and fine green framing.
+- **Evidence:** the text-free `public/cafe-artesano-ca-v1.svg` provides the compact CA monogram for the 52px header and browser chrome; the supplied path-based `public/LOGOTIPO CA.svg` provides the full brown, green, and off-white vertical lockup for large-format presentation. `banner_principal.jpg` adds plantation greens, mountains, coffee fruit, and warm product photography; `banner_secundario.jpg` reinforces pale neutrals, steam, and fine green framing.
 
 ## Tokens
 
@@ -159,9 +159,9 @@ Use a centered content container (`max-width: 72rem`) with 20px mobile gutters a
 
 ## Imagery and motion
 
-Use the text-free, derived floral `favicon.svg` as the compact 52px header mark and browser favicon; it contains no tiny lettering and remains recognizable at 16–48px. Use the supplied path-based `LOGOTIPO CA.svg` only as the prominent full lockup on `--ca-brand-surface`, whose fixed off-white value keeps the fixed-colour art readable in both themes. `favicon.ico` remains a fallback. Keep embedded lettering in `banner_principal.jpg` and `banner_secundario.jpg` uncropped and do not repeat their claims as image-only content. Prefer natural, uncrowded crops; preserve the portrait video’s orientation and provide controls and a text introduction nearby. Images need concise Spanish alt text that describes content, not decorative styling; empty alt text is appropriate only when an adjacent label conveys the same information.
+Use the text-free, versioned `cafe-artesano-ca-v1.svg` as the compact 52px header mark and browser favicon at the absolute URL `/cafe-artesano-ca-v1.svg`; it contains no tiny lettering and remains recognizable at 16–48px. Its 64 × 64 construction uses a cream rounded-square field, broad brand-green path strokes forming the CA monogram, and one simple leaf with a cream vein derived from the supplied `Recurso 5.png` identity. The `-v1` filename deliberately invalidates stale favicon caches. No legacy icon candidate is published, so browsers cannot fall back to stale artwork. Use the supplied path-based `LOGOTIPO CA.svg` only as the prominent full lockup on `--ca-brand-surface`, whose fixed off-white value keeps the fixed-colour art readable in both themes. Keep embedded lettering in `banner_principal.jpg` and `banner_secundario.jpg` uncropped and do not repeat their claims as image-only content. Prefer natural, uncrowded crops; preserve the portrait video’s orientation and provide controls and a text introduction nearby. Images need concise Spanish alt text that describes content, not decorative styling; empty alt text is appropriate only when an adjacent label conveys the same information.
 
-GSAP progressively enhances already-visible content only after Angular renders in a browser. A combined `(min-width: 48rem) and (prefers-reduced-motion: no-preference)` media query gates all dynamic GSAP imports, so mobile and reduced-motion users do not download those chunks. `ScrollTrigger` and `ScrollToPlugin` register once, and component-owned `gsap.context()` plus `gsap.matchMedia()` limit motion to that eligible context. The cinematic hero enters as staged copy and media with `opacity: 0.2 → 1`, `y: 36px → 0`, `0.82s` duration, and `0.1s` stagger; it has no CSS pre-hide dependency. The clipped hero image holds `scale(1.1)` and receives transform-only GSAP `fromTo` parallax from `yPercent: 5` to `yPercent: -5` with `scrub: 0.6`, preventing exposed edges without moving layout. Once-only section reveals use `opacity: 0.45 → 1`, `y: 40px → 0`, and `0.75s`. Contexts and media queries revert on destruction; late dynamic imports are ignored after destruction. There is no pinning, snapping, layout-property animation, essential-content gating, or smooth-scroll CSS.
+GSAP progressively enhances motion only after Angular renders in a browser. A combined `(min-width: 48rem) and (prefers-reduced-motion: no-preference)` media query gates all dynamic GSAP imports, so mobile and reduced-motion users do not download those chunks. `ScrollTrigger` and `ScrollToPlugin` register once, and component-owned `gsap.context()` plus `gsap.matchMedia()` limit motion to that eligible context. Hero and section entrance reveals were intentionally removed: asynchronous initialization could apply translated, lower-opacity start states after first paint and visibly snap already-visible content. The clipped hero image holds `scale(1.1)` and receives transform-only GSAP `fromTo` parallax from `yPercent: 5` to `yPercent: -5` with `scrub: 0.6`, preventing exposed edges without moving layout. The fixed scroll-top control retains its GSAP show/hide and ScrollTo motion. Contexts and media queries revert on destruction; late dynamic imports are ignored after destruction. There is no pinning, snapping, layout-property animation, essential-content gating, or smooth-scroll CSS.
 
 The fixed native 44 × 44px arrow control has the Spanish name `Volver al inicio` and a 20 × 20px decorative SVG. It remains in the DOM but is invisible, disabled, `aria-hidden`, and removed from tab order when the document is not scrollable (`documentElement.scrollHeight <= innerHeight`) or when its exact scrollable-page progress `scrollY / (documentElement.scrollHeight - innerHeight)` is below `0.10`; at or above 10% it becomes enabled and keyboard/assistive-technology available. Scroll and resize listeners use passive scroll handling plus one coalesced `requestAnimationFrame` update; a `ResizeObserver` tracks practical document-height changes. Destruction removes listeners, cancels a queued frame, and disconnects the observer. CSS supplies the theme-safe show/hide fallback (with no transition under reduced motion); eligible GSAP animates the control with `autoAlpha`, `y`, and `scale`. It uses GSAP ScrollToPlugin with `autoKill` when available and immediate native scrolling otherwise. The video starts muted only when at least 25% visible, pauses below that threshold, retains native controls for audio opt-in, safely absorbs rejected playback, disconnects its observer on destruction, and does not auto-play under reduced motion.
 
@@ -181,7 +181,7 @@ All hero variants are served locally; the page does not hotlink Unsplash at runt
 
 ### Social sharing and search discovery
 
-The temporary canonical origin is `https://cafeartesanocr.netlify.app/`. It is used consistently by the canonical link, Open Graph image and URL, X/Twitter card image, Organization JSON-LD, `robots.txt`, and `sitemap.xml`. When a custom domain is adopted, migrate every absolute SEO URL together rather than mixing origins.
+The temporary canonical origin is `https://cafeartesanocr.netlify.app/`. The Spanish source document is canonical at `/`; English is canonical at `/en/`. Both use the same absolute social image and Organization identity. When a custom domain is adopted, migrate every absolute SEO URL together rather than mixing origins.
 
 | Topic | Record |
 | --- | --- |
@@ -189,10 +189,10 @@ The temporary canonical origin is `https://cafeartesanocr.netlify.app/`. It is u
 | Format and dimensions | JPEG, 1200 × 630 pixels |
 | Provenance | Local derivative of the official Unsplash CDN crop: `https://images.unsplash.com/photo-1612668196612-70262cad2ad7?ixlib=rb-4.1.0&fm=jpg&fit=crop&crop=entropy&w=1200&h=630&q=85` |
 | Published URL | `https://cafeartesanocr.netlify.app/cafe-artesano-social.jpg` |
-| Alternative text | `Cerezas maduras de café en la planta` describes the coffee-cherry image without claiming it contains a logo. |
+| Alternative text | Spanish: `Cerezas maduras de café en la planta`; English: `Ripe coffee cherries on the plant`. Neither claims the image contains a logo. |
 | Delivery rule | Serve this local public asset in metadata; do not hotlink the Unsplash image at runtime. |
-| Discovery files | `public/robots.txt` allows crawling and points to the absolute sitemap; `public/sitemap.xml` lists only the canonical root URL. |
-| Structured identity | One `Organization` JSON-LD record identifies Café Artesano as a Costa Rican coffee brand with its canonical ID, local logo URL, telephone, Costa Rica service area, and official Facebook profile only. |
+| Discovery files | `public/robots.txt` allows crawling and points to the root sitemap. `public/sitemap.xml` lists `/` and `/en/`; every URL has XHTML `es-CR`, `en`, and `x-default` alternates. |
+| Structured identity | One `Organization` JSON-LD record identifies Café Artesano as a Costa Rican coffee brand with its canonical ID, local logo URL, telephone, Costa Rica service area, and official Facebook profile only. Its locale-specific description changes, but its identity URL is never duplicated or localized. |
 
 ## Accessibility and component patterns
 
@@ -209,3 +209,27 @@ The temporary canonical origin is `https://cafeartesanocr.netlify.app/`. It is u
 1. Use the semantic tokens in `src/styles.css` and Tailwind utilities before adding one-off colors.
 2. Keep critical business claims as HTML text and verify keyboard focus, zoom, and reduced motion.
 3. Re-check contrast and image crops in the rendered mobile and desktop page before extending this system.
+
+## Compile-time internationalization
+
+Angular 22 compile-time i18n builds the Spanish Costa Rica source locale (`es-CR`) at `/` and the complete English locale (`en`) at `/en/`. The project declares `sourceLocale` as `{ "code": "es-CR", "subPath": "" }`, declares English with `subPath: "en"`, builds all locales for production, and treats missing translations as build errors. `@angular/localize` is installed through the Angular CLI schematic and initialized as an Angular polyfill and TypeScript type dependency.
+
+Every landing-page string, translatable alternative text, fallback, caption, title, and accessible label has a stable semantic Angular custom ID. Runtime theme action and status labels use `$localize` with the same stable-ID policy. Do not translate the Café Artesano brand name, phone number, URLs, technical attributes, asset names, or HTML identifiers.
+
+### Locale navigation
+
+The compact header locale link is a conventional document navigation, not a router action. In the Spanish source output it links to `/en/`, has `hreflang="en"` and `lang="en"`, and announces English. The English translation localizes those attributes and label so it links back to `/`, has `hreflang="es-CR"` and `lang="es-CR"`, and announces Spanish. Do not add click interception, locale storage, runtime translation, or client-side locale routing.
+
+### Translator workflow
+
+1. Run `npm run extract:i18n` to regenerate the XLIFF 2 source catalog at `src/locale/messages.xlf` after changing marked content.
+2. Preserve every custom unit ID, source placeholder, and inline XLIFF placeholder in `src/locale/messages.en.xlf`; provide a nonempty professional English `<target>` for every source unit and never use `state="needs-translation"`.
+3. Run the focused tests and `npm run build`. Production builds fail when a translation is missing, emit physical Spanish and English documents, then run `scripts/localize-static-seo.mjs` to transform only `dist/cafe-artesano/browser/en/index.html` and validate both documents. Run `npm run verify:locales` to validate existing artifacts without mutation.
+
+### Localized static SEO and deployment
+
+The source `src/index.html` is the Spanish static-SEO authority: canonical `/`, `og:locale` `es_CR`, `og:locale:alternate` `en_US`, and exactly three alternate links (`es-CR` root, `en` `/en/`, and `x-default` root). The post-build localizer changes only the emitted English index: canonical and `og:url` become `/en/`; title, description, Open Graph/X titles/descriptions/image alt, Organization description, and no-script fallback become English; `og:locale` becomes `en_US` with Spanish alternate `es_CR`. It fails closed for missing or duplicate required fields, incorrect language/base/canonical/hreflang values, unmarked Organization JSON-LD, or an incomplete fallback. It preserves Angular’s generated `lang="en"` and `base href="/en/"`, absolute social asset URLs and dimensions, and the single Organization identity URL.
+
+Netlify publishes `dist/cafe-artesano/browser` with no global SPA redirect. The anchor-only landing therefore serves physical `/index.html` and `/en/index.html`; unknown routes receive ordinary 404 handling instead of Spanish fallback HTML. Keep this behavior unless actual client-side routes are introduced.
+
+For one locale during development, run `npm start` for the unlocalized source-development build, `npm run ng -- serve --configuration es-CR` for the compiled Spanish locale, or `npm run ng -- serve --configuration en` for the compiled English locale. Production `npm run build` intentionally emits both locales.

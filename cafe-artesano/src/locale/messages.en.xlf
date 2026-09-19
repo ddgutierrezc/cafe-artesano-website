@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="2.0" xmlns="urn:oasis:names:tc:xliff:document:2.0" srcLang="es-CR" trgLang="en">
+  <file id="ngi18n" original="ng.template">
+    <unit id="skip-to-content"><segment><source>Saltar al contenido principal</source><target>Skip to main content</target></segment></unit>
+    <unit id="header-navigation"><segment><source>Navegación principal</source><target>Primary navigation</target></segment></unit>
+    <unit id="brand-home-link"><segment><source>Café Artesano, ir al inicio</source><target>Café Artesano, home</target></segment></unit>
+    <unit id="brand-mark-alt"><segment><source>Monograma floral de Café Artesano</source><target>Café Artesano floral monogram</target></segment></unit>
+    <unit id="section-navigation"><segment><source>Secciones de Café Artesano</source><target>Café Artesano sections</target></segment></unit>
+    <unit id="nav-origin"><segment><source>Origen</source><target>Origin</target></segment></unit>
+    <unit id="nav-process"><segment><source>Proceso</source><target>Process</target></segment></unit>
+    <unit id="nav-quality"><segment><source>Calidad</source><target>Quality</target></segment></unit>
+    <unit id="nav-contact"><segment><source>Contacto</source><target>Contact</target></segment></unit>
+    <unit id="locale-switch-href"><segment><source>/en/</source><target>/</target></segment></unit>
+    <unit id="locale-switch-hreflang"><segment><source>en</source><target>es-CR</target></segment></unit>
+    <unit id="locale-switch-lang"><segment><source>en</source><target>es-CR</target></segment></unit>
+    <unit id="locale-switch-aria-label"><segment><source>Cambiar el idioma a inglés</source><target>Change language to Spanish</target></segment></unit>
+    <unit id="locale-switch-title"><segment><source>Ver esta página en inglés</source><target>View this page in Spanish</target></segment></unit>
+    <unit id="locale-switch-text"><segment><source>English</source><target>Español</target></segment></unit>
+    <unit id="header-call-action"><segment><source>Llámenos</source><target>Call us</target></segment></unit>
+    <unit id="hero-eyebrow"><segment><source>Café de altura · Costa Rica</source><target>High-altitude coffee · Costa Rica</target></segment></unit>
+    <unit id="hero-title"><segment><source>Café Artesano: origen que se disfruta en cada taza.</source><target>Café Artesano: an origin to savor in every cup.</target></segment></unit>
+    <unit id="hero-lead"><segment><source> Cultivamos y tostamos café con calma, respetando la tierra de Palmichal de Acosta y el carácter natural de cada grano. </source><target> We grow and roast coffee patiently, respecting the land of Palmichal de Acosta and the natural character of every bean. </target></segment></unit>
+    <unit id="hero-contact-action"><segment><source>Hablemos de café</source><target>Let’s talk coffee</target></segment></unit>
+    <unit id="hero-origin-action"><segment><source>Conozca nuestro origen</source><target>Discover our origin</target></segment></unit>
+    <unit id="hero-image-alt"><segment><source>Cerezas de café maduras entre hojas verdes</source><target>Ripe coffee cherries among green leaves</target></segment></unit>
+    <unit id="brand-lockup-alt"><segment><source>Logotipo completo de Café Artesano</source><target>Full Café Artesano logo</target></segment></unit>
+    <unit id="coffee-landscape-label"><segment><source>Paisaje cafetalero de Café Artesano</source><target>Café Artesano coffee landscape</target></segment></unit>
+    <unit id="coffee-landscape-alt"><segment><source>Plantación, montañas y café de Café Artesano en Costa Rica</source><target>Café Artesano plantation, mountains, and coffee in Costa Rica</target></segment></unit>
+    <unit id="origin-eyebrow"><segment><source>Raíces con propósito</source><target>Roots with purpose</target></segment></unit>
+    <unit id="origin-title"><segment><source>El origen es parte del sabor.</source><target>Origin is part of the flavor.</target></segment></unit>
+    <unit id="origin-story-first"><segment><source>Nacemos en Palmichal de Acosta, una comunidad costarricense donde las montañas, el clima y las manos cafeteras definen nuestro ritmo.</source><target>We come from Palmichal de Acosta, a Costa Rican community where the mountains, climate, and coffee growers define our rhythm.</target></segment></unit>
+    <unit id="origin-story-second"><segment><source>Cada cosecha nos invita a escuchar el grano y a compartir un café que habla de su lugar, de su gente y del trabajo hecho con respeto.</source><target>Each harvest invites us to listen to the bean and share a coffee that speaks of its place, its people, and work done with respect.</target></segment></unit>
+    <unit id="process-eyebrow"><segment><source>Nuestro oficio</source><target>Our craft</target></segment></unit>
+    <unit id="process-title"><segment><source>Tostado natural, carácter propio.</source><target>Natural roasting, distinctive character.</target></segment></unit>
+    <unit id="process-copy"><segment><source>Trabajamos un tostado natural que acompaña la identidad del café sin ocultarla. Buscamos una taza equilibrada, aromática y lista para acompañar sus momentos cotidianos.</source><target>We use a natural roast that supports the coffee’s identity without concealing it. We seek a balanced, aromatic cup ready for your everyday moments.</target></segment></unit>
+    <unit id="process-contact-link"><segment><source>Consulte por nuestro café <pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span aria-hidden=&quot;true&quot;&gt;" dispEnd="&lt;/span&gt;">→</pc></source><target>Ask about our coffee <pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span aria-hidden=&quot;true&quot;&gt;" dispEnd="&lt;/span&gt;">→</pc></target></segment></unit>
+    <unit id="process-step-one-title"><segment><source>Selección atenta</source><target>Thoughtful selection</target></segment></unit>
+    <unit id="process-step-one-copy"><segment><source>Elegimos granos que expresan el origen.</source><target>We choose beans that express their origin.</target></segment></unit>
+    <unit id="process-step-two-title"><segment><source>Tostado cuidado</source><target>Careful roasting</target></segment></unit>
+    <unit id="process-step-two-copy"><segment><source>Respetamos el aroma y la dulzura natural.</source><target>We respect the aroma and natural sweetness.</target></segment></unit>
+    <unit id="process-step-three-title"><segment><source>Cercanía real</source><target>Real connection</target></segment></unit>
+    <unit id="process-step-three-copy"><segment><source>Compartimos café hecho para disfrutarse.</source><target>We share coffee made to be enjoyed.</target></segment></unit>
+    <unit id="quality-image-alt"><segment><source>Taza de café humeante de Café Artesano sobre una mesa clara</source><target>A steaming Café Artesano coffee cup on a light table</target></segment></unit>
+    <unit id="quality-eyebrow"><segment><source>Una pausa bien hecha</source><target>A well-crafted pause</target></segment></unit>
+    <unit id="quality-title"><segment><source>Calidad que se nota desde el primer aroma.</source><target>Quality you notice from the first aroma.</target></segment></unit>
+    <unit id="quality-copy"><segment><source>Una buena taza comienza antes de servirla. Por eso cuidamos el recorrido completo, desde nuestro entorno cafetalero hasta el momento de abrir una bolsa de Café Artesano.</source><target>A good cup begins before it is served. That is why we care for the entire journey, from our coffee-growing surroundings to the moment you open a bag of Café Artesano.</target></segment></unit>
+    <unit id="quality-quote"><segment><source>“Café local, natural y hecho con orgullo.”</source><target>“Local, natural coffee made with pride.”</target></segment></unit>
+    <unit id="video-eyebrow"><segment><source>Desde Palmichal</source><target>From Palmichal</target></segment></unit>
+    <unit id="video-title"><segment><source>Conozca el café detrás de nuestra historia.</source><target>Meet the coffee behind our story.</target></segment></unit>
+    <unit id="video-copy"><segment><source>Este breve video muestra el entorno que inspira nuestro trabajo. Active los controles para reproducirlo cuando usted decida.</source><target>This short video shows the surroundings that inspire our work. Use the controls to play it whenever you choose.</target></segment></unit>
+    <unit id="video-fallback"><segment><source>Su navegador no permite reproducir este video. Puede contactarnos para conocer Café Artesano.</source><target>Your browser cannot play this video. Contact us to learn about Café Artesano.</target></segment></unit>
+    <unit id="video-caption"><segment><source>Video vertical de Café Artesano en Palmichal de Acosta.</source><target>Vertical Café Artesano video from Palmichal de Acosta.</target></segment></unit>
+    <unit id="contact-eyebrow"><segment><source>Estamos cerca</source><target>We are close by</target></segment></unit>
+    <unit id="contact-title"><segment><source>Conversemos desde Palmichal de Acosta.</source><target>From Palmichal de Acosta, let’s connect.</target></segment></unit>
+    <unit id="contact-copy"><segment><source>Para conocer Café Artesano o consultar disponibilidad, llámenos. Será un gusto atenderle.</source><target>To learn about Café Artesano or ask about availability, call us. We will be glad to help.</target></segment></unit>
+    <unit id="phone-label"><segment><source>Teléfono</source><target>Phone</target></segment></unit>
+    <unit id="contact-location"><segment><source>Palmichal de Acosta, Costa Rica</source><target>Palmichal de Acosta, Costa Rica</target></segment></unit>
+    <unit id="social-navigation"><segment><source>Redes sociales de Café Artesano</source><target>Café Artesano social media</target></segment></unit>
+    <unit id="facebook-link-label"><segment><source>Facebook de Café Artesano (se abre en una pestaña nueva)</source><target>Café Artesano Facebook (opens in a new tab)</target></segment></unit>
+    <unit id="facebook-link-text"><segment><source>Facebook</source><target>Facebook</target></segment></unit>
+    <unit id="whatsapp-link-label"><segment><source>WhatsApp de Café Artesano (se abre en una pestaña nueva)</source><target>Café Artesano WhatsApp (opens in a new tab)</target></segment></unit>
+    <unit id="whatsapp-link-text"><segment><source>WhatsApp</source><target>WhatsApp</target></segment></unit>
+    <unit id="footer-location"><segment><source>Café de Palmichal de Acosta</source><target>Coffee from Palmichal de Acosta</target></segment></unit>
+    <unit id="scroll-top-label"><segment><source>Volver al inicio</source><target>Back to top</target></segment></unit>
+    <unit id="scroll-top-title"><segment><source>Volver al inicio</source><target>Back to top</target></segment></unit>
+    <unit id="theme-toggle-action-light"><segment><source>Activar tema claro (tema oscuro activo)</source><target>Activate light theme (dark theme active)</target></segment></unit>
+    <unit id="theme-toggle-action-dark"><segment><source>Activar tema oscuro (tema claro activo)</source><target>Activate dark theme (light theme active)</target></segment></unit>
+    <unit id="theme-status-dark"><segment><source>Tema oscuro activo.</source><target>Dark theme active.</target></segment></unit>
+    <unit id="theme-status-light"><segment><source>Tema claro activo.</source><target>Light theme active.</target></segment></unit>
+  </file>
+</xliff>

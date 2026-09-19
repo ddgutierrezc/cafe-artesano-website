@@ -1,3 +1,21 @@
+interface FileSystem {
+  readFileSync(path: string, encoding: 'utf8'): string;
+}
+
+interface PathModule {
+  resolve(...paths: string[]): string;
+}
+
+declare function require(module: 'node:fs'): FileSystem;
+declare function require(module: 'node:path'): PathModule;
+
+const { readFileSync } = require('node:fs');
+const { resolve } = require('node:path');
+
+function readText(relativePath: string): string {
+  return readFileSync(resolve(relativePath), 'utf8');
+}
+
 import { TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
 
@@ -311,6 +329,89 @@ describe('App', () => {
     expect(page.querySelector('footer')).toBeTruthy();
   });
 
+  it('uses stable compile-time i18n IDs for landing content, accessibility labels, and runtime theme labels', () => {
+    const template = readText('src/app/app.html');
+    const component = readText('src/app/app.ts');
+
+    expect(template).toContain('i18n="@@hero-title"');
+    expect(template).toContain('i18n-alt="@@hero-image-alt"');
+    expect(template).toContain('i18n-aria-label="@@header-navigation"');
+    expect(template).toContain('i18n="@@locale-switch-text"');
+    expect(template).toContain('i18n-href="@@locale-switch-href"');
+    expect(template).toContain('i18n-title="@@locale-switch-title"');
+    expect(template).toContain('i18n="@@video-fallback"');
+    expect(component).toContain('$localize`:@@theme-toggle-action-light:');
+    expect(component).toContain('$localize`:@@theme-toggle-action-dark:');
+  });
+
+  it('uses full document locale navigation with source and translated locale semantics', () => {
+    const page = createPage();
+    const template = readText('src/app/app.html');
+    const englishCatalog = readText('src/locale/messages.en.xlf');
+    const localeLink = page.querySelector<HTMLAnchorElement>('a[href="/en/"]');
+
+    expect(localeLink?.textContent?.trim()).toBe('English');
+    expect(localeLink?.hreflang).toBe('en');
+    expect(localeLink?.lang).toBe('en');
+    expect(localeLink?.getAttribute('aria-label')).toBe('Cambiar el idioma a inglés');
+    expect(localeLink?.title).toBe('Ver esta página en inglés');
+    expect(template).not.toContain('(click)="switchLocale');
+    expect(englishCatalog).toContain('<unit id="locale-switch-href"><segment><source>/en/</source><target>/</target>');
+    expect(englishCatalog).toContain('<unit id="locale-switch-text"><segment><source>English</source><target>Español</target>');
+  });
+
+  // CA-11 owns post-build emitted-English artifact verification; these tests intentionally validate only source catalogs.
+  it('keeps the English catalog complete, translated, and structurally aligned with the source catalog', () => {
+    const parser = new DOMParser();
+    const source = parser.parseFromString(readText('src/locale/messages.xlf'), 'application/xml');
+    const english = parser.parseFromString(readText('src/locale/messages.en.xlf'), 'application/xml');
+    const units = (document: XMLDocument) => Array.from(document.getElementsByTagName('unit'));
+    const unitIds = (catalogUnits: Element[]) => catalogUnits.map((unit) => unit.getAttribute('id') ?? '');
+    const duplicateIds = (catalogUnits: Element[]) => unitIds(catalogUnits).filter((id, index, ids) => ids.indexOf(id) !== index);
+    const placeholders = (unit: Element, elementName: 'source' | 'target') => Array
+      .from(unit.getElementsByTagName(elementName)[0]?.getElementsByTagName('*') ?? [])
+      .filter((element) => ['pc', 'ph'].includes(element.localName))
+      .map((element) => `${element.localName}:${element.getAttribute('id') ?? ''}`)
+      .sort();
+    const sourceUnits = units(source);
+    const englishUnits = units(english);
+    const sourceById = new Map(sourceUnits.map((unit) => [unit.getAttribute('id'), unit]));
+    const englishById = new Map(englishUnits.map((unit) => [unit.getAttribute('id'), unit]));
+
+    expect(source.getElementsByTagName('parsererror')).toHaveLength(0);
+    expect(english.getElementsByTagName('parsererror')).toHaveLength(0);
+    expect(duplicateIds(sourceUnits)).toEqual([]);
+    expect(duplicateIds(englishUnits)).toEqual([]);
+    expect(unitIds(englishUnits).sort()).toEqual(unitIds(sourceUnits).sort());
+    expect(englishUnits.every((unit) => (unit.getElementsByTagName('target')[0]?.textContent?.trim().length ?? 0) > 0)).toBe(true);
+    expect(englishUnits.every((unit) => !Array
+      .from(unit.getElementsByTagName('*'))
+      .some((element) => element.getAttribute('state') === 'needs-translation'))).toBe(true);
+
+    for (const [id, sourceUnit] of sourceById) {
+      expect(placeholders(englishById.get(id)!, 'target')).toEqual(placeholders(sourceUnit, 'source'));
+    }
+  });
+
+  it('keeps approved natural English brand copy in the catalog', () => {
+    const english = new DOMParser().parseFromString(readText('src/locale/messages.en.xlf'), 'application/xml');
+    const targetsById = new Map(Array.from(english.getElementsByTagName('unit')).map((unit) => [
+      unit.getAttribute('id'),
+      unit.getElementsByTagName('target')[0]?.textContent?.trim(),
+    ]));
+
+    expect(Object.fromEntries(targetsById)).toMatchObject({
+      'brand-home-link': 'Café Artesano, home',
+      'hero-title': 'Café Artesano: an origin to savor in every cup.',
+      'origin-story-first': 'We come from Palmichal de Acosta, a Costa Rican community where the mountains, climate, and coffee growers define our rhythm.',
+      'process-step-three-title': 'Real connection',
+      'quality-eyebrow': 'A well-crafted pause',
+      'contact-title': 'From Palmichal de Acosta, let’s connect.',
+      'scroll-top-label': 'Back to top',
+      'scroll-top-title': 'Back to top',
+    });
+  });
+
   it('exposes corrected Costa Rican contact details without the retired number', () => {
     const page = createPage();
     const phoneLinks = Array.from(page.querySelectorAll<HTMLAnchorElement>('a[href="tel:+50671606734"]'));
@@ -352,7 +453,7 @@ describe('App', () => {
     const page = createPage();
     const images = Array.from(page.querySelectorAll<HTMLImageElement>('img[ngsrc]'));
     const heroImage = page.querySelector<HTMLImageElement>('img[ngsrc="hero_cafe_cerezas_fpsb7jo8nhk-768.webp"]');
-    const headerMark = page.querySelector<HTMLImageElement>('header img[src="favicon.svg"]');
+    const headerMark = page.querySelector<HTMLImageElement>('header img[src="/cafe-artesano-ca-v1.svg"]');
 
     expect(images.map((image) => image.getAttribute('ngsrc'))).toEqual([
       'hero_cafe_cerezas_fpsb7jo8nhk-768.webp',
@@ -596,20 +697,10 @@ describe('App', () => {
     });
     expect(parallax?.[2].scrollTrigger).not.toHaveProperty('pin');
     expect(parallax?.[2].scrollTrigger).not.toHaveProperty('snap');
-    expect(gsapMocks.ScrollTrigger.create).toHaveBeenCalled();
-    expect(gsapMocks.ScrollTrigger.create.mock.calls.every(([options]) => (
-      options.pin === undefined && options.snap === undefined
-    ))).toBe(true);
-    expect(gsapMocks.gsap.fromTo).toHaveBeenCalledWith(
-      expect.any(Array),
-      { opacity: 0.2, y: 36 },
-      expect.objectContaining({ duration: 0.82, opacity: 1, stagger: 0.1, y: 0 }),
-    );
-    expect(gsapMocks.gsap.fromTo).toHaveBeenCalledWith(
-      expect.any(HTMLElement),
-      { opacity: 0.45, y: 40 },
-      expect.objectContaining({ duration: 0.75, opacity: 1, y: 0 }),
-    );
+    expect(gsapMocks.gsap.fromTo).toHaveBeenCalledTimes(1);
+    expect(gsapMocks.ScrollTrigger.create).not.toHaveBeenCalled();
+    expect((fixture.nativeElement as HTMLElement).querySelector('.hero-entrance')).toBeNull();
+    expect((fixture.nativeElement as HTMLElement).querySelector('.gsap-reveal')).toBeNull();
 
     setScrollMetrics(900);
     window.dispatchEvent(new Event('scroll'));

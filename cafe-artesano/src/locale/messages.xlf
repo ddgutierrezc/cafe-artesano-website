@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="2.0" xmlns="urn:oasis:names:tc:xliff:document:2.0" srcLang="es-CR">
+  <file id="ngi18n" original="ng.template">
+    <unit id="skip-to-content">
+      <notes>
+        <note category="location">src/app/app.html:1,3</note>
+      </notes>
+      <segment>
+        <source>Saltar al contenido principal</source>
+      </segment>
+    </unit>
+    <unit id="header-navigation">
+      <notes>
+        <note category="location">src/app/app.html:3</note>
+      </notes>
+      <segment>
+        <source>Navegación principal</source>
+      </segment>
+    </unit>
+    <unit id="brand-home-link">
+      <notes>
+        <note category="location">src/app/app.html:5</note>
+      </notes>
+      <segment>
+        <source>Café Artesano, ir al inicio</source>
+      </segment>
+    </unit>
+    <unit id="brand-mark-alt">
+      <notes>
+        <note category="location">src/app/app.html:6</note>
+      </notes>
+      <segment>
+        <source>Monograma floral de Café Artesano</source>
+      </segment>
+    </unit>
+    <unit id="section-navigation">
+      <notes>
+        <note category="location">src/app/app.html:8</note>
+      </notes>
+      <segment>
+        <source>Secciones de Café Artesano</source>
+      </segment>
+    </unit>
+    <unit id="nav-origin">
+      <notes>
+        <note category="location">src/app/app.html:9,10</note>
+      </notes>
+      <segment>
+        <source>Origen</source>
+      </segment>
+    </unit>
+    <unit id="nav-process">
+      <notes>
+        <note category="location">src/app/app.html:10,11</note>
+      </notes>
+      <segment>
+        <source>Proceso</source>
+      </segment>
+    </unit>
+    <unit id="nav-quality">
+      <notes>
+        <note category="location">src/app/app.html:11,12</note>
+      </notes>
+      <segment>
+        <source>Calidad</source>
+      </segment>
+    </unit>
+    <unit id="nav-contact">
+      <notes>
+        <note category="location">src/app/app.html:12,14</note>
+      </notes>
+      <segment>
+        <source>Contacto</source>
+      </segment>
+    </unit>
+    <unit id="locale-switch-href">
+      <notes>
+        <note category="location">src/app/app.html:15</note>
+      </notes>
+      <segment>
+        <source>/en/</source>
+      </segment>
+    </unit>
+    <unit id="locale-switch-hreflang">
+      <notes>
+        <note category="location">src/app/app.html:15</note>
+      </notes>
+      <segment>
+        <source>en</source>
+      </segment>
+    </unit>
+    <unit id="locale-switch-lang">
+      <notes>
+        <note category="location">src/app/app.html:15</note>
+      </notes>
+      <segment>
+        <source>en</source>
+      </segment>
+    </unit>
+    <unit id="locale-switch-aria-label">
+      <notes>
+        <note category="location">src/app/app.html:15</note>
+      </notes>
+      <segment>
+        <source>Cambiar el idioma a inglés</source>
+      </segment>
+    </unit>
+    <unit id="locale-switch-title">
+      <notes>
+        <note category="location">src/app/app.html:15</note>
+      </notes>
+      <segment>
+        <source>Ver esta página en inglés</source>
+      </segment>
+    </unit>
+    <unit id="locale-switch-text">
+      <notes>
+        <note category="location">src/app/app.html:15,16</note>
+      </notes>
+      <segment>
+        <source>English</source>
+      </segment>
+    </unit>
+    <unit id="header-call-action">
+      <notes>
+        <note category="location">src/app/app.html:20,23</note>
+      </notes>
+      <segment>
+        <source>Llámenos</source>
+      </segment>
+    </unit>
+    <unit id="hero-eyebrow">
+      <notes>
+        <note category="location">src/app/app.html:29,30</note>
+      </notes>
+      <segment>
+        <source>Café de altura · Costa Rica</source>
+      </segment>
+    </unit>
+    <unit id="hero-title">
+      <notes>
+        <note category="location">src/app/app.html:30,31</note>
+      </notes>
+      <segment>
+        <source>Café Artesano: origen que se disfruta en cada taza.</source>
+      </segment>
+    </unit>
+    <unit id="hero-lead">
+      <notes>
+        <note category="location">src/app/app.html:32,34</note>
+      </notes>
+      <segment>
+        <source> Cultivamos y tostamos café con calma, respetando la tierra de Palmichal de Acosta y el carácter natural de cada grano. </source>
+      </segment>
+    </unit>
+    <unit id="hero-contact-action">
+      <notes>
+        <note category="location">src/app/app.html:35,36</note>
+      </notes>
+      <segment>
+        <source>Hablemos de café</source>
+      </segment>
+    </unit>
+    <unit id="hero-origin-action">
+      <notes>
+        <note category="location">src/app/app.html:36,39</note>
+      </notes>
+      <segment>
+        <source>Conozca nuestro origen</source>
+      </segment>
+    </unit>
+    <unit id="hero-image-alt">
+      <notes>
+        <note category="location">src/app/app.html:44</note>
+      </notes>
+      <segment>
+        <source>Cerezas de café maduras entre hojas verdes</source>
+      </segment>
+    </unit>
+    <unit id="brand-lockup-alt">
+      <notes>
+        <note category="location">src/app/app.html:48</note>
+      </notes>
+      <segment>
+        <source>Logotipo completo de Café Artesano</source>
+      </segment>
+    </unit>
+    <unit id="coffee-landscape-label">
+      <notes>
+        <note category="location">src/app/app.html:54</note>
+      </notes>
+      <segment>
+        <source>Paisaje cafetalero de Café Artesano</source>
+      </segment>
+    </unit>
+    <unit id="coffee-landscape-alt">
+      <notes>
+        <note category="location">src/app/app.html:56</note>
+      </notes>
+      <segment>
+        <source>Plantación, montañas y café de Café Artesano en Costa Rica</source>
+      </segment>
+    </unit>
+    <unit id="origin-eyebrow">
+      <notes>
+        <note category="location">src/app/app.html:63,64</note>
+      </notes>
+      <segment>
+        <source>Raíces con propósito</source>
+      </segment>
+    </unit>
+    <unit id="origin-title">
+      <notes>
+        <note category="location">src/app/app.html:64,66</note>
+      </notes>
+      <segment>
+        <source>El origen es parte del sabor.</source>
+      </segment>
+    </unit>
+    <unit id="origin-story-first">
+      <notes>
+        <note category="location">src/app/app.html:67,68</note>
+      </notes>
+      <segment>
+        <source>Nacemos en Palmichal de Acosta, una comunidad costarricense donde las montañas, el clima y las manos cafeteras definen nuestro ritmo.</source>
+      </segment>
+    </unit>
+    <unit id="origin-story-second">
+      <notes>
+        <note category="location">src/app/app.html:68,71</note>
+      </notes>
+      <segment>
+        <source>Cada cosecha nos invita a escuchar el grano y a compartir un café que habla de su lugar, de su gente y del trabajo hecho con respeto.</source>
+      </segment>
+    </unit>
+    <unit id="process-eyebrow">
+      <notes>
+        <note category="location">src/app/app.html:76,77</note>
+      </notes>
+      <segment>
+        <source>Nuestro oficio</source>
+      </segment>
+    </unit>
+    <unit id="process-title">
+      <notes>
+        <note category="location">src/app/app.html:77,78</note>
+      </notes>
+      <segment>
+        <source>Tostado natural, carácter propio.</source>
+      </segment>
+    </unit>
+    <unit id="process-copy">
+      <notes>
+        <note category="location">src/app/app.html:78,79</note>
+      </notes>
+      <segment>
+        <source>Trabajamos un tostado natural que acompaña la identidad del café sin ocultarla. Buscamos una taza equilibrada, aromática y lista para acompañar sus momentos cotidianos.</source>
+      </segment>
+    </unit>
+    <unit id="process-contact-link">
+      <notes>
+        <note category="location">src/app/app.html:79,81</note>
+      </notes>
+      <segment>
+        <source>Consulte por nuestro café <pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span aria-hidden=&quot;true&quot;&gt;" dispEnd="&lt;/span&gt;">→</pc></source>
+      </segment>
+    </unit>
+    <unit id="process-step-one-title">
+      <notes>
+        <note category="location">src/app/app.html:82</note>
+      </notes>
+      <segment>
+        <source>Selección atenta</source>
+      </segment>
+    </unit>
+    <unit id="process-step-one-copy">
+      <notes>
+        <note category="location">src/app/app.html:82,83</note>
+      </notes>
+      <segment>
+        <source>Elegimos granos que expresan el origen.</source>
+      </segment>
+    </unit>
+    <unit id="process-step-two-title">
+      <notes>
+        <note category="location">src/app/app.html:83</note>
+      </notes>
+      <segment>
+        <source>Tostado cuidado</source>
+      </segment>
+    </unit>
+    <unit id="process-step-two-copy">
+      <notes>
+        <note category="location">src/app/app.html:83,84</note>
+      </notes>
+      <segment>
+        <source>Respetamos el aroma y la dulzura natural.</source>
+      </segment>
+    </unit>
+    <unit id="process-step-three-title">
+      <notes>
+        <note category="location">src/app/app.html:84</note>
+      </notes>
+      <segment>
+        <source>Cercanía real</source>
+      </segment>
+    </unit>
+    <unit id="process-step-three-copy">
+      <notes>
+        <note category="location">src/app/app.html:84,86</note>
+      </notes>
+      <segment>
+        <source>Compartimos café hecho para disfrutarse.</source>
+      </segment>
+    </unit>
+    <unit id="quality-image-alt">
+      <notes>
+        <note category="location">src/app/app.html:92</note>
+      </notes>
+      <segment>
+        <source>Taza de café humeante de Café Artesano sobre una mesa clara</source>
+      </segment>
+    </unit>
+    <unit id="quality-eyebrow">
+      <notes>
+        <note category="location">src/app/app.html:95,96</note>
+      </notes>
+      <segment>
+        <source>Una pausa bien hecha</source>
+      </segment>
+    </unit>
+    <unit id="quality-title">
+      <notes>
+        <note category="location">src/app/app.html:96,97</note>
+      </notes>
+      <segment>
+        <source>Calidad que se nota desde el primer aroma.</source>
+      </segment>
+    </unit>
+    <unit id="quality-copy">
+      <notes>
+        <note category="location">src/app/app.html:97,98</note>
+      </notes>
+      <segment>
+        <source>Una buena taza comienza antes de servirla. Por eso cuidamos el recorrido completo, desde nuestro entorno cafetalero hasta el momento de abrir una bolsa de Café Artesano.</source>
+      </segment>
+    </unit>
+    <unit id="quality-quote">
+      <notes>
+        <note category="location">src/app/app.html:98,100</note>
+      </notes>
+      <segment>
+        <source>“Café local, natural y hecho con orgullo.”</source>
+      </segment>
+    </unit>
+    <unit id="video-eyebrow">
+      <notes>
+        <note category="location">src/app/app.html:106,107</note>
+      </notes>
+      <segment>
+        <source>Desde Palmichal</source>
+      </segment>
+    </unit>
+    <unit id="video-title">
+      <notes>
+        <note category="location">src/app/app.html:107,108</note>
+      </notes>
+      <segment>
+        <source>Conozca el café detrás de nuestra historia.</source>
+      </segment>
+    </unit>
+    <unit id="video-copy">
+      <notes>
+        <note category="location">src/app/app.html:108,110</note>
+      </notes>
+      <segment>
+        <source>Este breve video muestra el entorno que inspira nuestro trabajo. Active los controles para reproducirlo cuando usted decida.</source>
+      </segment>
+    </unit>
+    <unit id="video-fallback">
+      <notes>
+        <note category="location">src/app/app.html:113,115</note>
+      </notes>
+      <segment>
+        <source>Su navegador no permite reproducir este video. Puede contactarnos para conocer Café Artesano.</source>
+      </segment>
+    </unit>
+    <unit id="video-caption">
+      <notes>
+        <note category="location">src/app/app.html:115,116</note>
+      </notes>
+      <segment>
+        <source>Video vertical de Café Artesano en Palmichal de Acosta.</source>
+      </segment>
+    </unit>
+    <unit id="contact-eyebrow">
+      <notes>
+        <note category="location">src/app/app.html:123,124</note>
+      </notes>
+      <segment>
+        <source>Estamos cerca</source>
+      </segment>
+    </unit>
+    <unit id="contact-title">
+      <notes>
+        <note category="location">src/app/app.html:124,125</note>
+      </notes>
+      <segment>
+        <source>Conversemos desde Palmichal de Acosta.</source>
+      </segment>
+    </unit>
+    <unit id="contact-copy">
+      <notes>
+        <note category="location">src/app/app.html:125,127</note>
+      </notes>
+      <segment>
+        <source>Para conocer Café Artesano o consultar disponibilidad, llámenos. Será un gusto atenderle.</source>
+      </segment>
+    </unit>
+    <unit id="phone-label">
+      <notes>
+        <note category="location">src/app/app.html:128,129</note>
+      </notes>
+      <segment>
+        <source>Teléfono</source>
+      </segment>
+    </unit>
+    <unit id="contact-location">
+      <notes>
+        <note category="location">src/app/app.html:129,130</note>
+      </notes>
+      <segment>
+        <source>Palmichal de Acosta, Costa Rica</source>
+      </segment>
+    </unit>
+    <unit id="social-navigation">
+      <notes>
+        <note category="location">src/app/app.html:130</note>
+      </notes>
+      <segment>
+        <source>Redes sociales de Café Artesano</source>
+      </segment>
+    </unit>
+    <unit id="facebook-link-label">
+      <notes>
+        <note category="location">src/app/app.html:131</note>
+      </notes>
+      <segment>
+        <source>Facebook de Café Artesano (se abre en una pestaña nueva)</source>
+      </segment>
+    </unit>
+    <unit id="facebook-link-text">
+      <notes>
+        <note category="location">src/app/app.html:131,132</note>
+      </notes>
+      <segment>
+        <source>Facebook</source>
+      </segment>
+    </unit>
+    <unit id="whatsapp-link-label">
+      <notes>
+        <note category="location">src/app/app.html:132</note>
+      </notes>
+      <segment>
+        <source>WhatsApp de Café Artesano (se abre en una pestaña nueva)</source>
+      </segment>
+    </unit>
+    <unit id="whatsapp-link-text">
+      <notes>
+        <note category="location">src/app/app.html:132,135</note>
+      </notes>
+      <segment>
+        <source>WhatsApp</source>
+      </segment>
+    </unit>
+    <unit id="footer-location">
+      <notes>
+        <note category="location">src/app/app.html:141,142</note>
+      </notes>
+      <segment>
+        <source>Café de Palmichal de Acosta</source>
+      </segment>
+    </unit>
+    <unit id="scroll-top-label">
+      <notes>
+        <note category="location">src/app/app.html:142</note>
+      </notes>
+      <segment>
+        <source>Volver al inicio</source>
+      </segment>
+    </unit>
+    <unit id="scroll-top-title">
+      <notes>
+        <note category="location">src/app/app.html:142</note>
+      </notes>
+      <segment>
+        <source>Volver al inicio</source>
+      </segment>
+    </unit>
+    <unit id="theme-toggle-action-light">
+      <notes>
+        <note category="location">src/app/app.ts:26</note>
+      </notes>
+      <segment>
+        <source>Activar tema claro (tema oscuro activo)</source>
+      </segment>
+    </unit>
+    <unit id="theme-toggle-action-dark">
+      <notes>
+        <note category="location">src/app/app.ts:27</note>
+      </notes>
+      <segment>
+        <source>Activar tema oscuro (tema claro activo)</source>
+      </segment>
+    </unit>
+    <unit id="theme-status-dark">
+      <notes>
+        <note category="location">src/app/app.ts:29</note>
+      </notes>
+      <segment>
+        <source>Tema oscuro activo.</source>
+      </segment>
+    </unit>
+    <unit id="theme-status-light">
+      <notes>
+        <note category="location">src/app/app.ts:30</note>
+      </notes>
+      <segment>
+        <source>Tema claro activo.</source>
+      </segment>
+    </unit>
+  </file>
+</xliff>

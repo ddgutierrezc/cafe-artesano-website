@@ -23,8 +23,11 @@ export class App implements OnDestroy {
   readonly theme = signal<Theme>('light');
   readonly isScrollTopVisible = signal(false);
   readonly themeToggleLabel = computed(() => this.theme() === 'dark'
-    ? 'Activar tema claro (tema oscuro activo)'
-    : 'Activar tema oscuro (tema claro activo)');
+    ? $localize`:@@theme-toggle-action-light:Activar tema claro (tema oscuro activo)`
+    : $localize`:@@theme-toggle-action-dark:Activar tema oscuro (tema claro activo)`);
+  readonly themeStatusLabel = computed(() => this.theme() === 'dark'
+    ? $localize`:@@theme-status-dark:Tema oscuro activo.`
+    : $localize`:@@theme-status-light:Tema claro activo.`);
 
   private readonly document = inject(DOCUMENT);
   private readonly host: ElementRef<HTMLElement> = inject(ElementRef);
@@ -242,34 +245,6 @@ export class App implements OnDestroy {
               },
             });
           }
-
-          const heroEntrance = Array.from(host.querySelectorAll<HTMLElement>('.hero-entrance'));
-          if (heroEntrance.length) {
-            gsap.fromTo(heroEntrance, { opacity: 0.2, y: 36 }, {
-              duration: 0.82,
-              ease: 'power3.out',
-              opacity: 1,
-              stagger: 0.1,
-              y: 0,
-            });
-          }
-
-          host.querySelectorAll<HTMLElement>('.gsap-reveal').forEach((element) => {
-            ScrollTrigger.create({
-              trigger: element,
-              start: 'top 88%',
-              once: true,
-              onEnter: () => {
-                gsap.fromTo(element, { opacity: 0.45, y: 40 }, {
-                  duration: 0.75,
-                  ease: 'power2.out',
-                  opacity: 1,
-                  overwrite: 'auto',
-                  y: 0,
-                });
-              },
-            });
-          });
         });
       }, host);
     } catch {

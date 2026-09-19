@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Café Artesano CA monogram">
+  <rect width="64" height="64" rx="12" fill="#f9f8f6"/>
+  <path d="M25 17.5a15.5 15.5 0 1 0 0 29" fill="none" stroke="#315534" stroke-linecap="round" stroke-width="8"/>
+  <path d="M31.5 46.5 42 17.5l10.5 29M35 36h14" fill="none" stroke="#315534" stroke-linecap="round" stroke-linejoin="round" stroke-width="7"/>
+  <path d="M45.5 49.5c2-7.3 7.1-10.9 12-11.5-1.2 5.7-4.9 10.3-12 11.5Z" fill="#4f6a48"/>
+  <path d="M46 49c2.5-3.4 5-5.8 8.4-8.1" fill="none" stroke="#f9f8f6" stroke-linecap="round" stroke-width="1.5"/>
+</svg>

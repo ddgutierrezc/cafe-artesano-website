@@ -24,6 +24,9 @@ The Angular 22 application still shows the generated starter screen. The busines
 - Add system-aware light/dark themes with an accessible manual selector and persisted user preference; both themes must retain the accepted contrast targets.
 - Add production-grade technical SEO, social sharing metadata, structured data, robots/sitemap discovery, and accessible Facebook/WhatsApp links using the temporary Netlify URL.
 - Increase GSAP motion to a clearly visible cinematic treatment on eligible desktop/no-reduced-motion contexts, and show the scroll-to-top control only after 10% document progress.
+- Eliminate visible animation jumps: retain stable GSAP parallax and scroll-control motion, but remove hero/section entrance reveals if they cannot initialize without snapping already-rendered content.
+- Add official Angular compile-time i18n with Spanish (`es-CR`) at `/` and a complete English build at `/en/`, including document navigation, localized static SEO, hreflang, sitemap, tests, and Netlify-safe publication.
+- Replace the generic flower favicon/header mark with a cache-busted compact `CA` monogram derived from the supplied brand reference.
 
 ## Non-goals
 
@@ -44,7 +47,7 @@ The Angular 22 application still shows the generated starter screen. The busines
 | Motion | Subtle CSS reveal/hover treatment only; reduced-motion users receive no nonessential animation. |
 | TDD | Off by explicit user choice. Use ordinary focused Vitest and production-build checks; strict RED/GREEN evidence is not required. |
 | Delivery | `ask-on-risk`; forecast exceeds the ~400 authored-line review heuristic. No commit will be created without explicit user authorization. |
-| Persistence | Local task document is authoritative. Engram mirror is pending because the local provider reports an ownership mismatch. |
+| Persistence | Local task document remains authoritative and is mirrored to Engram, which the user re-enabled successfully on 2026-09-19. |
 | Contact correction | By explicit user clarification, `71606734` is the Costa Rican phone number; use display `7160-6734` and link `tel:+50671606734` everywhere. |
 | AAA scope | By explicit user choice, target WCAG 2.2 AAA contrast rather than claiming full AAA conformance across every success criterion. Every text label—including buttons and links—targets at least 7:1; large text targets at least 4.5:1; non-text borders, icons, focus indicators, and control boundaries retain at least 3:1 under the applicable WCAG criterion. The user explicitly chose this W3C-correct policy over a nonstandard 7:1 requirement for non-text UI. |
 | Motion expansion | By explicit user request, add GSAP and parallax as a separate work unit. Motion must progressively enhance the page, avoid layout shifts, preserve content without JavaScript, and fully opt out under `prefers-reduced-motion`. The footer scroll-to-top text must become an icon-based control with an accessible name; GSAP handles the animated scroll while reduced-motion uses immediate navigation. |
@@ -54,10 +57,15 @@ The Angular 22 application still shows the generated starter screen. The busines
 | Temporary canonical URL | Use `https://cafeartesanocr.netlify.app/` for canonical, Open Graph, sitemap, robots, and structured data until a custom domain is available. Replace all absolute SEO URLs together when migrating domains. |
 | Social identity | Facebook is `https://www.facebook.com/cafeartesanopalmichal`; no Instagram profile is claimed. WhatsApp uses `https://wa.me/50671606734`. Structured data describes Café Artesano as an `Organization`/coffee brand, not a physical café. |
 | Cinematic motion refinement | By explicit user choice, make GSAP motion visibly cinematic rather than subtle while preserving reduced-motion opt-out, transform/opacity-only performance, content availability, cleanup, and mobile restraint. The scroll-to-top control stays unavailable until vertical document progress reaches 10%, then enters/exits accessibly. |
+| Motion stability | User-observed jumps take priority over decorative reveals. Root cause: async GSAP imports leave content visible, then `fromTo` applies a lower-opacity/translated start state after paint or at `onEnter`, producing a visible snap. Remove hero and per-section entrance reveals rather than pre-hiding content; retain parallax and scroll-top animation, which do not alter document layout. |
+| Internationalization | Use official Angular 22 compile-time localization. Spanish Costa Rica (`es-CR`) is the source locale at the existing root URL; English (`en`) is emitted under `/en/`. Language switching uses ordinary document links because each locale is a separate compiled application variant. Missing translations fail the build. |
+| Localized SEO | Preserve crawlable static metadata in each generated `index.html`. The Spanish source index remains authoritative for `/`; a deterministic post-build step localizes the generated English index and verifies canonical, hreflang, Open Graph locale, JSON-LD, and noscript output. Sitemap lists both locale URLs with alternates. |
+| Localized deployment | Netlify serves physical `/index.html` and `/en/index.html` artifacts. Remove the unnecessary global SPA fallback for this anchor-only landing so unknown English URLs cannot silently receive Spanish HTML. |
+| Favicon identity | Replace the generic flower with a square, legible CA monogram based on the supplied `Recurso 5.png`; use a new versioned filename to invalidate browser favicon caches and reuse it as the compact header mark. |
 
 ## Workload forecast
 
-Estimated total: 430–650 authored changed lines, excluding existing assets.
+Estimated cumulative scope: 800–1,250 authored changed lines, excluding existing/generated assets.
 
 | ID | Work unit | Route and trigger | Estimate |
 |---|---|---|---:|
@@ -69,6 +77,10 @@ Estimated total: 430–650 authored changed lines, excluding existing assets.
 | CA-6 | Add system-aware light/dark themes, accessible selector, persistence, pre-render theme bootstrap, dual-theme contrast evidence, and tests. | Delegated writer: design tokens plus multi-file behavior. Execute before CA-5 so motion controls inherit final theme tokens. | 140–240 |
 | CA-7 | Add canonical/meta/OG/Twitter metadata, Organization JSON-LD, robots.txt, sitemap.xml, social preview media, accessible Facebook/WhatsApp links, and deployment-aware SEO documentation/tests. | Delegated writer: multi-file metadata/public-assets/content integration. | 120–220 |
 | CA-8 | Increase desktop GSAP motion to a cinematic but accessible treatment and gate the scroll-to-top control at 10% document progress with tested show/hide/cleanup behavior. | Delegated writer: multi-file motion refinement. | 100–180 |
+| CA-9 | Remove snap-prone hero/section reveal animations while preserving stable ±5% parallax, scroll-top animation, video behavior, accessibility, and lifecycle cleanup. | Delegated writer: multi-file motion stabilization. | 50–100 |
+| CA-10 | Add Angular localize infrastructure, mark all visible/runtime strings, extract XLIFF 2, translate English, and add accessible locale navigation. | Delegated writer: dependency/config/template/catalog implementation. | 220–360 plus generated XLIFF |
+| CA-11 | Localize static SEO/build outputs, add canonical/hreflang/sitemap rules, make Netlify locale-safe, and replace the favicon/header mark with a versioned CA monogram. | Delegated writer: build script, metadata, assets, tests, and deployment config. | 180–300 |
+| CA-12 | Verify both locale artifacts, extraction integrity, SEO/discovery output, accessibility regression, and production publication layout. | Independent verifier plus parent Angular MCP/build artifact inspection. | Evidence-only |
 
 ## Checklist
 
@@ -128,10 +140,34 @@ Estimated total: 430–650 authored changed lines, excluding existing assets.
   - [x] Animate control entry/exit with GSAP when available and preserve immediate accessible fallback otherwise.
   - [x] Test exact threshold boundaries, resize/document-height changes, keyboard availability, cleanup, and GSAP options.
   - [x] Re-run tests, production build, independent verification, and Angular MCP spot check.
+- [x] **CA-9 — Motion jump stabilization**
+  - [x] Remove hero entrance replay that applies transformed/transparent states after first paint.
+  - [x] Remove per-section `onEnter` reveals that snap visible content into a starting state.
+  - [x] Preserve and test ±5% hero parallax, scroll-top GSAP/fallback behavior, reduced motion, and cleanup.
+  - [x] Remove obsolete motion classes/tests/docs without changing layout or content.
+  - [x] Re-run tests, production build, independent verification, and Angular MCP spot check.
+- [x] **CA-10 — Angular i18n application content**
+  - [x] Add `@angular/localize` through Angular CLI and configure `es-CR` source/root plus `en` under `/en/` with missing translations as errors.
+  - [x] Mark every visible template string and translatable accessibility attribute with stable, meaningful i18n IDs.
+  - [x] Localize runtime theme labels with `$localize` and add accessible document-level language links.
+  - [x] Extract XLIFF 2 catalogs and provide complete, reviewed English translations.
+  - [x] Prove with a production build that Spanish emits at `browser/index.html` and English at `browser/en/index.html`, with correct `lang` and base href.
+  - [x] Preserve motion, theme, contact, accessibility, social, and content behavior with focused tests.
+- [x] **CA-11 — Localized SEO, deployment, and favicon**
+  - [x] Add deterministic English static-metadata/noscript localization and canonical/hreflang/OG/JSON-LD verification for both generated indices.
+  - [x] Publish a bilingual alternate sitemap and keep robots pointing to its root URL.
+  - [x] Remove or narrow the global Netlify SPA fallback so physical locale documents are authoritative.
+  - [x] Create `cafe-artesano-ca-v1.svg`, update favicon/header references, and verify no generic flower reference remains.
+  - [x] Add build-artifact tests for both locales, assets, links, metadata, and discovery files.
+- [ ] **CA-12 — Bilingual release verification** *(in progress)*
+  - [ ] Run extraction integrity, unit tests, full localized production build, post-build metadata verification, and whitespace checks.
+  - [ ] Independently verify translated content, locale navigation, SEO outputs, accessibility, favicon, and Netlify publication mapping.
+  - [ ] Run a final Angular CLI MCP production build and document any post-build step separately.
+  - [ ] Record remaining live-browser, crawler, and deployment limitations.
 
 ## Acceptance criteria
 
-- The page presents Cafe Artesano as a credible local coffee brand in Spanish on mobile and desktop.
+- The page presents Cafe Artesano as a credible local coffee brand in Spanish and English on mobile and desktop.
 - Essential claims are available as HTML text rather than only embedded in images.
 - The supplied brand imagery is integrated without destructive cropping of embedded text.
 - Static images follow Angular 22 image best practices where technically applicable.
@@ -145,7 +181,7 @@ Estimated total: 430–650 authored changed lines, excluding existing assets.
 - Angular CLI MCP confirmed one Angular 22 application named `cafe-artesano` with build, serve, and test targets.
 - Supplied assets were visually inspected. The video metadata reports a 640×1280 portrait H.264/AAC asset of about 20 seconds.
 - Automated palette extraction is unavailable: `python3` exists without Pillow; `python`, ImageMagick, and ffmpeg are unavailable.
-- Engram mirror attempt is pending due to provider ownership mismatch.
+- Engram mirroring was initially unavailable due to provider ownership mismatch; the user re-enabled it successfully before CA-10, and current architecture/decisions/bug fixes are persisted.
 - CA-1 changed `DESIGN.md`, `src/styles.css`, and `src/index.html` (about 203 authored lines). The worker build and whitespace check passed; an independent verifier found no severity findings. Its partial status reflected missing changed-file inventory only, which the parent resolved with `git status` and confirmed no package or component changes attributable to CA-1.
 - Parent spot check through Angular CLI MCP: production `build` passed with a 225.80 kB initial bundle and output under `dist/cafe-artesano`.
 - CA-1 remains uncommitted because the user has not authorized commits.
@@ -191,6 +227,15 @@ Estimated total: 430–650 authored changed lines, excluding existing assets.
 - Independent CA-8 reverification found no functional severity findings; 28/28 tests and production build passed, cinematic hero/reveal values remained intact, and no CA-4/5/6/7 regression was detected.
 - Parent Angular CLI MCP final CA-8 spot check passed: 254.75 kB initial bundle / 68.78 kB estimated transfer; GSAP remains lazy and no budgets warned.
 
+- The user observed visual jumps from animation. Inspection identified the root cause: async `fromTo` hero/section reveals applied translated/lower-opacity initial states after content was already painted.
+- CA-9 removed every hero/section reveal hook and retained only stable ±5% image parallax plus fixed scroll-control motion. Independent verification found no HIGH or MEDIUM findings; 28/28 tests and the production build passed at 254.16 kB initial / 68.75 kB estimated transfer.
+- Parent Angular CLI MCP CA-9 spot check passed with the same 254.16 kB initial / 68.75 kB estimated transfer bundle; GSAP remains lazy and no budgets warned.
+- CA-10 implemented official Angular compile-time localization with 66 stable XLIFF 2 units, es-CR at `/`, English at `/en/`, a document locale link, missing-translation errors, and 31 passing tests. The build experiment proved physical root and `/en/` indices with correct `lang`, base href, and relative assets.
+- Independent CA-10 verification found configuration/catalog completeness sound, but flagged literal English phrasing and catalog-test gaps for duplicate IDs/placeholder parity. Focused correction rewrote eight targets into approved natural English and added parser-based duplicate-ID, exact-ID-set, per-unit placeholder-parity, translation-state, completeness, and copy-quality assertions; 32 tests and the bilingual build pass.
+- CA-10 final readback confirmed the corrected source-faithful contact line (`From Palmichal de Acosta, let’s connect.`) in the English catalog, assertion, and emitted bundle. Parent Git inventory confirmed no CA-11 file was touched. The Spanish static metadata/noscript in the English physical index moved to CA-11 as an explicit release blocker.
+- CA-11 implemented deterministic English generated-index localization/validation, bilingual canonical/hreflang/OG/X/JSON-LD/noscript output, bilingual alternate sitemap, physical-document Netlify publication, and a versioned path-based CA monogram.
+- Final CA-11 correction removed both legacy favicon candidates and references, made the localizer reject any reappearance, and added byte-idempotency, duplicate-tag, check-only, English-only mutation, and legacy-candidate tests. Independent reverification found no severity findings; 35/35 tests, localized build, and artifact check pass.
+
 ## Next step
 
-Redeploy the latest repository state, hard-refresh the Netlify site, and visually check cinematic motion on a viewport ≥768px with reduced motion disabled. Then verify live `/robots.txt`, `/sitemap.xml`, social image, Google Rich Results, and Facebook Sharing Debugger.
+Design and implement official Angular 22 compile-time i18n for Spanish at `/` and English at `/en/`, together with the cache-busted CA-monogram favicon. Afterward: commit/push, Netlify redeploy, hard-refresh visual review, live discovery/social validation, and eventual custom-domain migration.
