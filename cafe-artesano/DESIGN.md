@@ -197,9 +197,10 @@ The temporary canonical origin is `https://cafeartesanocr.netlify.app/`. The Spa
 ## Accessibility and component patterns
 
 - Apply the documented WCAG 2.2 AAA **contrast** targets; this does not certify full AAA conformance across all success criteria. Use semantic landmarks and keep focus visible with `--ca-focus`.
-- `index.html` includes a small semantic `noscript` fallback with the business name, Palmichal de Acosta location, corrected telephone link, and a JavaScript notice. It is not SSR and intentionally does not duplicate the landing page; global semantic rules retain documented readable foreground/background pairs in light and dark system schemes.
+- `index.html` includes a small semantic `noscript` fallback with the business name, Palmichal de Acosta location, visible phone information, a WhatsApp messaging link, and a JavaScript notice. It is not SSR and intentionally does not duplicate the landing page; global semantic rules retain documented readable foreground/background pairs in light and dark system schemes.
+- **Contact channel:** WhatsApp is the primary conversion path. Header and hero `.cta-primary` controls use the direct WhatsApp URL, open in a new tab with an accessible notice, and have no click interception. Keep `7160-6734` prominently visible as non-interactive secondary contact information; retain the Organization telephone only as structured identity data.
 - Targets should be at least 44 × 44px; every control must work with keyboard and touch.
-- **Button:** `.cta-primary` supplies explicit dark-green fill, `--ca-on-action` text, boundary, hover, focus, and active states for critical phone CTAs; outlined forest control is reserved for secondary actions.
+- **Button:** `.cta-primary` supplies explicit dark-green fill, `--ca-on-action` text, boundary, hover, focus, and active states for critical WhatsApp messaging CTAs; outlined forest control is reserved for secondary actions.
 - **Card:** white surface, `--ca-line` border, 16px radius, soft shadow, and 24px padding; do not make a whole card clickable unless its purpose is singular.
 - **Eyebrow:** small uppercase sans label with generous tracking in forest; never use it as the only heading.
 - **Forms:** persistent Spanish labels, helpful error text, and no placeholder-only instructions.

@@ -22,7 +22,8 @@ const SPANISH = {
     'Café de altura · Costa Rica',
     'Café Artesano',
     'Café de tueste natural de Palmichal de Acosta, Costa Rica.',
-    'Llame al 7160-6734',
+    'Teléfono: 7160-6734',
+    'Escríbanos por WhatsApp',
   ],
 };
 
@@ -38,7 +39,8 @@ const ENGLISH = {
     'Coffee from Costa Rica',
     'Café Artesano',
     'Naturally roasted coffee from Palmichal de Acosta, Costa Rica.',
-    'Call 7160-6734',
+    'Phone: 7160-6734',
+    'Message us on WhatsApp',
   ],
 };
 
@@ -113,7 +115,7 @@ function replaceOrganization(html, description) {
 }
 
 function englishNoscript() {
-  return `<noscript data-seo-noscript>\n    <main class="noscript-fallback" aria-labelledby="noscript-title">\n      <section>\n        <p class="noscript-fallback__eyebrow">Coffee from Costa Rica</p>\n        <h1 id="noscript-title">Café Artesano</h1>\n        <p>Naturally roasted coffee from Palmichal de Acosta, Costa Rica.</p>\n        <p><a href="tel:+50671606734">Call 7160-6734</a> to ask about availability.</p>\n        <p class="noscript-fallback__note">Interactive content and animations require JavaScript; this essential information remains available.</p>\n      </section>\n    </main>\n  </noscript>`;
+  return `<noscript data-seo-noscript>\n    <main class="noscript-fallback" aria-labelledby="noscript-title">\n      <section>\n        <p class="noscript-fallback__eyebrow">Coffee from Costa Rica</p>\n        <h1 id="noscript-title">Café Artesano</h1>\n        <p>Naturally roasted coffee from Palmichal de Acosta, Costa Rica.</p>\n        <p>Phone: 7160-6734</p>\n        <p><a href="https://wa.me/50671606734" target="_blank" rel="noopener" aria-label="Message us on WhatsApp (opens in a new tab)" title="Message us on WhatsApp (opens in a new tab)">Message us on WhatsApp</a> to ask about availability.</p>\n        <p class="noscript-fallback__note">Interactive content and animations require JavaScript; this essential information remains available.</p>\n      </section>\n    </main>\n  </noscript>`;
 }
 
 export function localizeEnglishHtml(html) {

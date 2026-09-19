@@ -178,12 +178,12 @@ Estimated cumulative scope: 800–1,250 authored changed lines, excluding existi
   - [x] Add a regression test that executes/detects the script through a filesystem symlink.
   - [x] Re-run 35+ tests, localized build, artifact verification, and symlinked CLI simulation.
   - [x] Publish the correction and inspect the subsequent Netlify deployment; this disproved symlink detection as the only live cause and opened CA-14.
-- [ ] **CA-14 — Netlify monorepo configuration precedence** *(effective-base correction in progress)*
-  - [ ] Configure package-directory `cafe-artesano/netlify.toml` for its observed package base: `npm run build`, publishing `dist/cafe-artesano/browser`.
+- [x] **CA-14 — Netlify monorepo configuration precedence**
+  - [x] Configure package-directory `cafe-artesano/netlify.toml` for its observed package base: `npm run build`, publishing `dist/cafe-artesano/browser`.
   - [x] Delete `cafe-artesano/src/_redirects` so Netlify cannot restore the global Spanish SPA fallback.
-  - [ ] Test root/package configuration equivalence and run Netlify CLI build offline to validate actual resolved base/command/publish values.
-  - [ ] Publish again and verify the latest deploy succeeds, reports no redirects, preserves English `/en/` metadata, and keeps 404 behavior.
-- [ ] **CA-15 — WhatsApp-first contact actions** *(pending CA-14 closure)*
+  - [x] Test root/package configuration equivalence and run Netlify CLI build offline to validate actual resolved base/command/publish values.
+  - [x] Publish again and verify the latest deploy succeeds, reports no redirects, preserves English `/en/` metadata, and keeps 404 behavior.
+- [ ] **CA-15 — WhatsApp-first contact actions** *(in progress)*
   - [ ] Change header and hero primary CTAs to “Escríbenos” and link them to WhatsApp with accessible new-tab labels.
   - [ ] Replace call-oriented contact copy and noscript actions in Spanish and English with WhatsApp messaging language.
   - [ ] Keep `7160-6734` visibly available as secondary contact information without a primary `tel:` action.
@@ -268,8 +268,9 @@ Estimated cumulative scope: 800–1,250 authored changed lines, excluding existi
 - The surviving rule was `cafe-artesano/src/_redirects` (`/* /index.html 200`). Netlify monorepo documentation says package/base-directory configuration takes precedence over repository-root config, explaining why the root `npm run build` command was bypassed.
 - CA-14 added authoritative `cafe-artesano/netlify.toml`, deleted the stale redirect, and aligned root/package tests. Independent verification found no severity findings; 36/36 tests, localized build, artifact validation, redirect absence, and exact scope passed.
 - Commit `8e5e5af` deployed successfully as Netlify deploy `6aaeb25620a53100086fd71d`. The deploy summary reports no redirect rules. Live `/en/` has English title, `/en/` canonical, `en_US` Open Graph locale, English Organization description/noscript; `/` remains Spanish. The CA SVG returns 200, both legacy favicon URLs return 404, and an unknown English route returns 404.
-- Documentation-only commit `b8414d1` failed its Netlify build, and attempted root-relative correction `f48b147` also failed. A local `netlify build --offline` then provided decisive resolved-config evidence: Netlify selected `cafe-artesano/netlify.toml`, set current directory/base to `cafe-artesano`, and doubled the root-relative command/publish path (`cafe-artesano/cafe-artesano/...`). Therefore the original package-local app-relative values were correct; CA-14 is reopened to restore them and add Netlify CLI resolved-config validation.
+- Documentation-only commit `b8414d1` failed its Netlify build, and attempted root-relative correction `f48b147` also failed. A local `netlify build --offline` then provided decisive resolved-config evidence: Netlify selected `cafe-artesano/netlify.toml`, set current directory/base to `cafe-artesano`, and doubled the root-relative command/publish path (`cafe-artesano/cafe-artesano/...`). Therefore the package-local values were restored to app-relative and Netlify CLI verification became a release gate.
+- Commit `c8bcb85` deployed successfully as `6aaeb6a75b67410007e87b0a`. Netlify reports no redirect rules; live Spanish and English metadata/noscript are correct, the CA favicon returns 200, both legacy icon URLs return 404, and an unknown English route returns 404. CA-14 is closed.
 
 ## Next step
 
-Close CA-14 with a successful latest Netlify deploy, then implement and publish CA-15 WhatsApp-first contact actions. Verify both live locales, WhatsApp links, 404 behavior, and favicon; then perform the remaining visual/browser, Rich Results, and Facebook Sharing Debugger checks.
+Implement, verify, and publish CA-15 WhatsApp-first contact actions. Verify both live locales, WhatsApp links, 404 behavior, and favicon; then perform the remaining visual/browser, Rich Results, and Facebook Sharing Debugger checks.
