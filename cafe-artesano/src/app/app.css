@@ -1,34 +1,36 @@
-:host {
-  color: var(--ca-ink);
-  display: block;
-  font-family: Arial, Helvetica, sans-serif;
-  line-height: 1.6;
-}
-
-:host * {
-  box-sizing: border-box;
-}
-
-.skip-link {
-  background: var(--ca-forest-deep);
-  color: var(--ca-on-dark);
-  left: 1rem;
-  padding: 0.75rem 1rem;
-  position: fixed;
-  top: -5rem;
-  z-index: 20;
-}
-
-.skip-link:focus {
-  top: 1rem;
-}
-
 .site-header {
-  background: color-mix(in srgb, var(--ca-canvas) 94%, transparent);
+  background: var(--ca-header-surface);
   border-bottom: 1px solid var(--ca-line);
   position: sticky;
   top: 0;
   z-index: 10;
+}
+
+.cta-primary {
+  --ca-cta-surface: var(--ca-cta-default);
+  background-color: var(--ca-cta-surface);
+  border: 2px solid var(--ca-cta-border);
+}
+
+.cta-primary,
+.cta-primary:hover,
+.cta-primary:focus-visible,
+.cta-primary:active {
+  color: var(--ca-on-action);
+}
+
+.cta-primary:hover {
+  --ca-cta-surface: var(--ca-cta-hover);
+}
+
+.cta-primary:focus-visible {
+  --ca-cta-surface: var(--ca-cta-default);
+  outline: 3px solid var(--ca-focus);
+  outline-offset: 3px;
+}
+
+.cta-primary:active {
+  --ca-cta-surface: var(--ca-cta-active);
 }
 
 .hero {
@@ -46,7 +48,6 @@
 
 h1,
 h2 {
-  font-family: Georgia, 'Times New Roman', serif;
   letter-spacing: -0.03em;
   line-height: 1.08;
   margin: 0;
@@ -166,7 +167,6 @@ h2 {
   color: var(--ca-on-dark);
   display: inline-flex;
   flex-direction: column;
-  font-family: Georgia, 'Times New Roman', serif;
   font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 700;
   line-height: 1;
@@ -215,10 +215,6 @@ footer a:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :host {
-    scroll-behavior: auto;
-  }
-
   .reveal {
     animation: none;
   }

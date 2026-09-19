@@ -11,7 +11,13 @@
       <a class="inline-flex min-h-11 items-center px-2.5 text-sm font-bold text-[var(--ca-ink)] no-underline hover:text-[var(--ca-forest-deep)] max-[40rem]:px-1 max-[40rem]:text-[0.82rem]" href="#calidad">Calidad</a>
       <a class="inline-flex min-h-11 items-center px-2.5 text-sm font-bold text-[var(--ca-ink)] no-underline hover:text-[var(--ca-forest-deep)] max-[40rem]:px-1 max-[40rem]:text-[0.82rem]" href="#contacto">Contacto</a>
     </nav>
-    <a class="inline-flex min-h-11 items-center justify-center rounded-lg bg-[var(--ca-forest)] px-3 text-[0.82rem] font-bold text-[var(--ca-on-action)] no-underline hover:bg-[var(--ca-forest-deep)]" href="tel:+50671606734">Llámenos</a>
+    <div class="flex shrink-0 items-center gap-2">
+      <button class="theme-toggle inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border-2 border-[var(--ca-line)] bg-[var(--ca-surface)] text-xl text-[var(--ca-ink)]" type="button" (click)="toggleTheme()" [attr.aria-label]="themeToggleLabel()" [attr.aria-pressed]="theme() === 'dark'" [attr.title]="themeToggleLabel()">
+        <span aria-hidden="true">{{ theme() === 'dark' ? '☀' : '☾' }}</span>
+      </button>
+      <span class="sr-only" aria-live="polite">Tema {{ theme() === 'dark' ? 'oscuro' : 'claro' }} activo.</span>
+      <a class="cta-primary inline-flex min-h-11 items-center justify-center rounded-lg px-3 text-[0.82rem] font-bold no-underline" href="tel:+50671606734">Llámenos</a>
+    </div>
   </div>
 </header>
 
@@ -25,7 +31,7 @@
           Cultivamos y tostamos café con calma, respetando la tierra de Palmichal de Acosta y el carácter natural de cada grano.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
-          <a class="inline-flex min-h-11 items-center justify-center rounded-lg border-2 border-transparent bg-[var(--ca-forest)] px-[1.1rem] py-2.5 text-center font-extrabold text-[var(--ca-on-action)] no-underline hover:bg-[var(--ca-forest-deep)] hover:-translate-y-0.5" href="tel:+50671606734">Hablemos de café</a>
+          <a class="cta-primary inline-flex min-h-11 items-center justify-center rounded-lg px-[1.1rem] py-2.5 text-center font-extrabold no-underline hover:-translate-y-0.5" href="tel:+50671606734">Hablemos de café</a>
           <a class="inline-flex min-h-11 items-center justify-center rounded-lg border-2 border-[var(--ca-forest)] px-[1.1rem] py-2.5 text-center font-extrabold text-[var(--ca-forest-deep)] no-underline hover:bg-[var(--ca-surface-action-hover)]" href="#origen">Conozca nuestro origen</a>
         </div>
       </div>
@@ -85,7 +91,7 @@
     </div>
   </section>
 
-  <section class="section-video bg-[var(--ca-ink)] py-[clamp(4rem,8vw,6rem)] text-[var(--ca-on-dark)]" aria-labelledby="video-title">
+  <section class="section-video bg-[var(--ca-dark-surface)] py-[clamp(4rem,8vw,6rem)] text-[var(--ca-on-dark)]" aria-labelledby="video-title">
     <div class="site-shell mx-auto grid items-center gap-8 px-5 md:grid-cols-2 md:gap-[clamp(3rem,7vw,6rem)] md:px-8">
       <div class="video-copy reveal">
         <p class="eyebrow">Desde Palmichal</p>
@@ -103,7 +109,7 @@
   </section>
 
   <section id="contacto" class="bg-[var(--ca-canvas)] py-[clamp(4rem,8vw,6rem)]" aria-labelledby="contact-title">
-    <div class="site-shell mx-auto grid w-[calc(100%-2.5rem)] max-w-[72rem] gap-8 rounded-2xl bg-[var(--ca-forest-deep)] p-[clamp(1.5rem,5vw,3.5rem)] text-[var(--ca-on-dark)] md:w-[calc(100%-4rem)] md:grid-cols-[minmax(0,1.3fr)_minmax(14rem,.7fr)] reveal">
+    <div class="site-shell mx-auto grid w-[calc(100%-2.5rem)] max-w-[72rem] gap-8 rounded-2xl bg-[var(--ca-contact-surface)] p-[clamp(1.5rem,5vw,3.5rem)] text-[var(--ca-on-dark)] md:w-[calc(100%-4rem)] md:grid-cols-[minmax(0,1.3fr)_minmax(14rem,.7fr)] reveal">
       <div>
         <p class="eyebrow">Estamos cerca</p>
         <h2 id="contact-title">Conversemos desde Palmichal de Acosta.</h2>
@@ -117,7 +123,7 @@
   </section>
 </main>
 
-<footer class="bg-[var(--ca-ink)] text-[var(--ca-canvas)]">
+<footer class="bg-[var(--ca-footer-surface)] text-[var(--ca-on-dark)]">
   <div class="site-shell mx-auto flex min-h-20 items-center justify-between gap-4 px-5 md:px-8">
     <p class="m-0"><strong>Café Artesano</strong> · Café de Palmichal de Acosta</p>
     <a class="inline-flex min-h-11 items-center px-2.5 text-sm font-bold text-[var(--ca-on-dark)] no-underline hover:text-[var(--ca-on-dark)]" href="#inicio">Volver al inicio <span aria-hidden="true">↑</span></a>

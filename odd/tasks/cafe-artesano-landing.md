@@ -81,15 +81,17 @@ Estimated total: 430–650 authored changed lines, excluding existing assets.
   - [x] Perform structural readback against `DESIGN.md` and acceptance criteria.
   - [x] Record observed verification results and any limitations.
   - [x] Keep commit creation pending unless the user explicitly authorizes it.
-- [ ] **CA-4 — Contact and AAA contrast correction** *(in progress)*
-  - [ ] Replace all phone text and `tel:` links with `7160-6734` / `+50671606734`.
-  - [ ] Calculate and document WCAG contrast ratios for every semantic foreground/background pair used by text and controls.
-  - [ ] Adjust design tokens and hard-coded component colors where required to meet the chosen AAA contrast scope.
-  - [ ] Update focused tests for the corrected phone and critical accessibility behavior.
-  - [ ] Re-run tests, production build, and independent verification.
+- [x] **CA-4 — Contact and AAA contrast correction**
+  - [x] Replace all phone text and `tel:` links with `7160-6734` / `+50671606734`.
+  - [x] Calculate and document WCAG contrast ratios for every semantic foreground/background pair used by text and controls.
+  - [x] Adjust design tokens and hard-coded component colors where required to meet the chosen AAA contrast scope.
+  - [x] Update focused tests for the corrected phone and critical accessibility behavior.
+  - [x] Re-run tests, production build, and independent verification.
 - [ ] **CA-5 — GSAP parallax and motion polish**
   - [ ] Research current GSAP and Angular 22 lifecycle integration guidance.
   - [ ] Download one verified free hero asset into `cafe-artesano/public/`, record its source/license, dimensions, and purpose, and optimize it for web delivery.
+  - [ ] Integrate the supplied `public/LOGOTIPO CA.svg` for scalable large-format brand presentation while retaining or deriving a compact mark for small header use.
+  - [ ] Create a dedicated compact SVG favicon from the supplied vector mark, retain `favicon.ico` as fallback, update metadata, and verify legibility at small sizes.
   - [ ] Install a compatible GSAP release and integrate it without a component library.
   - [ ] Add restrained parallax/scroll reveals without hiding essential content before JavaScript runs.
   - [ ] Replace “Volver al inicio” text with an accessible arrow icon control and GSAP-powered scroll-to-top animation.
@@ -97,13 +99,13 @@ Estimated total: 430–650 authored changed lines, excluding existing assets.
   - [ ] Disable motion and automatic video playback cleanly for `prefers-reduced-motion` and small/low-power contexts where appropriate.
   - [ ] Clean up all GSAP contexts/triggers on component destruction and cover behavior with focused tests.
   - [ ] Re-run tests, production build, and independent verification.
-- [ ] **CA-6 — System-aware light/dark themes**
-  - [ ] Define complete semantic light and dark token sets with measured contrast evidence.
-  - [ ] Initialize from system preference without a flash of the wrong theme where practical.
-  - [ ] Add an accessible icon control that announces its current state/action and meets 44px sizing.
-  - [ ] Persist an explicit user choice and react safely to system changes when no override exists.
-  - [ ] Cover initialization, toggle, persistence, and contrast-critical markup with focused tests.
-  - [ ] Re-run tests, production build, and independent verification before CA-5.
+- [ ] **CA-6 — System-aware light/dark themes** *(correction in progress)*
+  - [x] Define complete semantic light and dark token sets with measured contrast evidence.
+  - [x] Initialize from system preference without a flash of the wrong theme where practical.
+  - [x] Add an accessible icon control that announces its current state/action and meets 44px sizing.
+  - [x] Persist an explicit user choice and react safely to system changes when no override exists.
+  - [x] Cover initialization, toggle, persistence, and contrast-critical markup with focused tests.
+  - [x] Re-run tests, production build, and whitespace/component-CSS checks before CA-5.
 
 ## Acceptance criteria
 
@@ -141,7 +143,14 @@ Estimated total: 430–650 authored changed lines, excluding existing assets.
 - The user chose muted visibility-driven video playback: begin at 25% visible, pause below the threshold, retain native controls, and do not auto-play for reduced-motion users.
 - Independent CA-4 verification confirmed every interactive text label exceeds 7:1, but found the translucent sticky-header border below 3:1 (2.45–2.95:1) and a near-threshold line/hero boundary. User visual feedback also reported that `Llámenos` and `Hablemos de café` text was not reliably visible despite authored ratios; CA-4 remains open for explicit rendered button classes and safer non-text contrast margins.
 - The user selected system preference plus an accessible persisted selector for light/dark mode. This is tracked as CA-6 and will execute before CA-5.
+- CA-4 remediation replaced critical Tailwind-only CTA colors with explicit `.cta-primary` states: 8.47:1 default/focus, 10.20:1 hover, and 11.94:1 active. The header is now opaque and its weakest documented boundary is 4.29:1.
+- Independent CA-4 reverification found no severity findings; 6/6 tests passed, the production build passed without warnings, retired-number checks passed, and component CSS remained 3,975 bytes.
+- Parent Angular CLI MCP spot check passed after CA-4 remediation: 229.58 kB initial bundle / 62.44 kB estimated transfer.
+- CA-6 added complete `data-theme` token overrides, an early storage/system bootstrap, guarded Angular signal state, and a 44px Spanish-labelled native toggle. The focused Vitest suite passed 9/9 tests; the production build passed with a 236.51 kB initial bundle / 64.33 kB estimated transfer; whitespace validation passed; and `app.css` measured 3,974 bytes (under the 4 KiB warning threshold). No Angular CLI MCP tool was available in this execution environment, so the implementation followed the recorded Angular 22 standalone and accessibility guidance.
+- CA-6 incident note: its writer reported editing this parent-owned task document outside the authorized surfaces. The untracked workspace prevents definitive attribution. Read-only diagnosis found CA-6 checklist/evidence consistent with current code and no other semantic unauthorized change; the parent reconciled only the stale next step.
+- Independent CA-6 verification completed but the candidate is not clean: MEDIUM dark-theme skip-link contrast is approximately 1.22:1 (white on light `--ca-forest-deep`) and LOW blocked-localStorage behavior can let a later system-theme event override a manual in-session selection. CA-6 was reopened for these two corrections before CA-5.
+- Newly supplied brand assets were inspected. `LOGOTIPO CA.svg` is a true path-based vector with the established green, brown, and off-white palette, so it is preferable for large-format brand display. Its full vertical lockup is too detailed for favicon/header-icon sizes; CA-5 will use or derive a compact vector mark and update the favicon separately.
 
 ## Next step
 
-Correct the CA-4 rendered-button and header-border findings, reverify CA-4, then implement and verify CA-6 before the already researched CA-5 motion/media work.
+Correct and reverify CA-6 dark skip-link contrast and in-session manual-theme precedence. Only after a clean result, run the parent Angular MCP spot check and begin CA-5.
