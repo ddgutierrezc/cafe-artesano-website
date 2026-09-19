@@ -25,7 +25,7 @@ export class App implements OnDestroy {
     : 'Activar tema oscuro (tema claro activo)');
 
   private readonly document = inject(DOCUMENT);
-  private readonly host = inject(ElementRef<HTMLElement>);
+  private readonly host: ElementRef<HTMLElement> = inject(ElementRef);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private mediaQuery?: MediaQueryList;
   private mediaQueryListener?: (event: MediaQueryListEvent) => void;
@@ -33,9 +33,10 @@ export class App implements OnDestroy {
   private reducedMotionListener?: (event: MediaQueryListEvent) => void;
   private videoObserver?: IntersectionObserver;
   private motionContext?: { revert: () => void };
-  private motionMedia?: { revert: () => void };
+  private motionMedia?: { add: (conditions: string, callback: () => void) => void; revert: () => void };
   private scrollToTopWithGsap?: () => void;
   private hasSessionThemeOverride = false;
+  private hasInitializedVideoMute = false;
   private isDestroyed = false;
 
   constructor() {
@@ -124,6 +125,10 @@ export class App implements OnDestroy {
         }
 
         if (entry.intersectionRatio >= 0.25) {
+          if (!this.hasInitializedVideoMute) {
+            video.muted = true;
+            this.hasInitializedVideoMute = true;
+          }
           try {
             void video.play().catch(() => undefined);
           } catch {
@@ -163,10 +168,11 @@ export class App implements OnDestroy {
 
       this.motionMedia?.revert();
       this.motionContext?.revert();
+      const host = this.host.nativeElement;
       this.motionContext = gsap.context(() => {
         this.motionMedia = gsap.matchMedia();
         this.motionMedia.add('(min-width: 48rem) and (prefers-reduced-motion: no-preference)', () => {
-          const heroMedia = this.host.nativeElement.querySelector<HTMLElement>('.hero-media');
+          const heroMedia = host.querySelector<HTMLElement>('.hero-media');
           if (heroMedia) {
             gsap.to(heroMedia, {
               ease: 'none',
@@ -180,7 +186,7 @@ export class App implements OnDestroy {
             });
           }
 
-          this.host.nativeElement.querySelectorAll<HTMLElement>('.gsap-reveal').forEach((element) => {
+          host.querySelectorAll<HTMLElement>('.gsap-reveal').forEach((element) => {
             ScrollTrigger.create({
               trigger: element,
               start: 'top 88%',
@@ -197,7 +203,7 @@ export class App implements OnDestroy {
             });
           });
         });
-      }, this.host.nativeElement);
+      }, host);
     } catch {
       // The page retains native anchors and immediate scrolling when GSAP cannot load.
     }
