@@ -1,0 +1,137 @@
+@import 'tailwindcss';
+
+:root {
+  --ca-canvas: #f7f8f3;
+  --ca-surface: #ffffff;
+  --ca-surface-muted: #edf1e7;
+  --ca-surface-hero: #eef0e5;
+  --ca-surface-action-hover: #eaf0e5;
+  --ca-ink: #3d2c22;
+  --ca-ink-muted: #5b493d;
+  --ca-forest: #365c3a;
+  --ca-forest-deep: #315534;
+  --ca-leaf: #c8d3b6;
+  --ca-warm: #9a6338;
+  --ca-line: #91897d;
+  --ca-focus: #1f5f42;
+  --ca-on-action: #ffffff;
+  --ca-on-dark: #ffffff;
+  --ca-on-dark-accent: #e6f0db;
+  --ca-on-dark-body: #ebe8e2;
+  --ca-on-dark-muted: #f3f1ec;
+  --ca-on-dark-caption: #d7d0c9;
+  --ca-video-surface: #17110d;
+  --ca-video-line: #a99b90;
+  --ca-shadow-card: 0 12px 32px rgb(61 44 34 / 12%);
+}
+
+@theme {
+  --color-canvas: var(--ca-canvas);
+  --color-surface: var(--ca-surface);
+  --color-surface-muted: var(--ca-surface-muted);
+  --color-ink: var(--ca-ink);
+  --color-ink-muted: var(--ca-ink-muted);
+  --color-forest: var(--ca-forest);
+  --color-forest-deep: var(--ca-forest-deep);
+  --color-leaf: var(--ca-leaf);
+  --color-warm: var(--ca-warm);
+  --color-line: var(--ca-line);
+  --color-focus: var(--ca-focus);
+  --color-on-action: var(--ca-on-action);
+  --color-on-dark: var(--ca-on-dark);
+  --font-display: Georgia, 'Times New Roman', serif;
+  --font-body: Inter, ui-sans-serif, system-ui, sans-serif;
+  --radius-control: 0.5rem;
+  --radius-card: 1rem;
+  --shadow-card: var(--ca-shadow-card);
+}
+
+html {
+  color-scheme: light;
+  scroll-behavior: smooth;
+  background: var(--ca-canvas);
+}
+
+body {
+  min-width: 20rem;
+  margin: 0;
+  background: var(--ca-canvas);
+  color: var(--ca-ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--ca-ink);
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+p,
+li {
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.16em;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 3px solid var(--ca-focus);
+  outline-offset: 3px;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+section[id] {
+  scroll-margin-top: 5rem;
+}
+
+::selection {
+  background: var(--ca-leaf);
+  color: var(--ca-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
