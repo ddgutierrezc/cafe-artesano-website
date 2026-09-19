@@ -121,12 +121,28 @@
         <source>English</source>
       </segment>
     </unit>
-    <unit id="header-call-action">
+    <unit id="header-whatsapp-action-label">
       <notes>
-        <note category="location">src/app/app.html:20,23</note>
+        <note category="location">src/app/app.html:20</note>
       </notes>
       <segment>
-        <source>Llámenos</source>
+        <source>Escríbenos por WhatsApp (se abre en una pestaña nueva)</source>
+      </segment>
+    </unit>
+    <unit id="header-whatsapp-action-title">
+      <notes>
+        <note category="location">src/app/app.html:20</note>
+      </notes>
+      <segment>
+        <source>Escríbenos por WhatsApp (se abre en una pestaña nueva)</source>
+      </segment>
+    </unit>
+    <unit id="header-whatsapp-action">
+      <notes>
+        <note category="location">src/app/app.html:20,25</note>
+      </notes>
+      <segment>
+        <source>Escríbenos</source>
       </segment>
     </unit>
     <unit id="hero-eyebrow">
@@ -153,12 +169,28 @@
         <source> Cultivamos y tostamos café con calma, respetando la tierra de Palmichal de Acosta y el carácter natural de cada grano. </source>
       </segment>
     </unit>
-    <unit id="hero-contact-action">
+    <unit id="hero-whatsapp-action-label">
+      <notes>
+        <note category="location">src/app/app.html:35</note>
+      </notes>
+      <segment>
+        <source>Escríbenos por WhatsApp (se abre en una pestaña nueva)</source>
+      </segment>
+    </unit>
+    <unit id="hero-whatsapp-action-title">
+      <notes>
+        <note category="location">src/app/app.html:35</note>
+      </notes>
+      <segment>
+        <source>Escríbenos por WhatsApp (se abre en una pestaña nueva)</source>
+      </segment>
+    </unit>
+    <unit id="hero-whatsapp-action">
       <notes>
         <note category="location">src/app/app.html:35,36</note>
       </notes>
       <segment>
-        <source>Hablemos de café</source>
+        <source>Escríbenos</source>
       </segment>
     </unit>
     <unit id="hero-origin-action">
@@ -414,7 +446,7 @@
         <note category="location">src/app/app.html:125,127</note>
       </notes>
       <segment>
-        <source>Para conocer Café Artesano o consultar disponibilidad, llámenos. Será un gusto atenderle.</source>
+        <source>Para conocer Café Artesano o consultar disponibilidad, escríbanos por WhatsApp. Será un gusto atenderle.</source>
       </segment>
     </unit>
     <unit id="phone-label">

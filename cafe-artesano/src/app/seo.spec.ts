@@ -158,13 +158,41 @@ describe('static SEO and deployment artifacts', () => {
 
     expect(localized).toContain('<title>Café Artesano | Costa Rican coffee from Palmichal de Acosta</title>');
     expect(localized).toContain('Naturally roasted coffee from Palmichal de Acosta, Costa Rica.');
-    expect(localized).toContain('Call 7160-6734');
+    expect(localized).toContain('Phone: 7160-6734');
+    expect(localized).toContain('Message us on WhatsApp');
+    expect(localized).toContain('href="https://wa.me/50671606734" target="_blank" rel="noopener"');
+    expect(localized).not.toContain(['href="tel', ''].join(':'));
+    expect(localized).not.toContain(`Call ${['7160', '6734'].join('-')}`);
     expect(localizer.localizeEnglishHtml(localized)).toBe(localized);
     expect(() => localizer.validateLocalizedHtml(localized, 'en')).not.toThrow();
     expect(() => localizer.localizeEnglishHtml('<html lang="en"><head></head></html>')).toThrow(/Static SEO validation failed/);
     expect(() => localizer.localizeEnglishHtml(duplicateCanonical)).toThrow(/expected exactly one canonical link/);
     expect(() => localizer.localizeEnglishHtml(duplicateDescription)).toThrow(/expected exactly one description meta/);
     expect(() => localizer.validateLocalizedHtml(localized.replace('og:locale" content="en_US"', 'og:locale" content="es_CR"'), 'en')).toThrow(/Static SEO validation failed/);
+  });
+
+  it('keeps Spanish and English noscript fallbacks WhatsApp-first with visible secondary phone information', async () => {
+    // @ts-expect-error The Node-only post-build script intentionally has no TypeScript declaration surface.
+    const localizer = await import('../../scripts/localize-static-seo.mjs');
+    const source = readText('src/index.html');
+    const english = localizer.localizeEnglishHtml(source
+      .replace('<html lang="es">', '<html lang="en">')
+      .replace('<base href="/">', '<base href="/en/">'));
+
+    expect(source).toContain('Teléfono: 7160-6734');
+    expect(source).toContain('Escríbanos por WhatsApp');
+    expect(source).toContain('href="https://wa.me/50671606734" target="_blank" rel="noopener"');
+    expect(source).toContain('aria-label="Escríbanos por WhatsApp (se abre en una pestaña nueva)"');
+    expect(source).toContain('title="Escríbanos por WhatsApp (se abre en una pestaña nueva)"');
+    expect(source).not.toContain(['href="tel', ''].join(':'));
+    expect(source).not.toMatch(new RegExp(['Lláme' + 'nos', 'Hablemos de ' + 'café', 'lláme' + 'nos'].join('|')));
+    expect(english).toContain('Phone: 7160-6734');
+    expect(english).toContain('Message us on WhatsApp');
+    expect(english).toContain('href="https://wa.me/50671606734" target="_blank" rel="noopener"');
+    expect(english).toContain('aria-label="Message us on WhatsApp (opens in a new tab)"');
+    expect(english).toContain('title="Message us on WhatsApp (opens in a new tab)"');
+    expect(english).not.toContain(['href="tel', ''].join(':'));
+    expect(english).not.toContain(`Call ${['7160', '6734'].join('-')}`);
   });
 
   it('recognizes only canonical direct and symlinked localizer entrypoints', async () => {

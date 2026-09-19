@@ -337,6 +337,12 @@ describe('App', () => {
     expect(template).toContain('i18n-alt="@@hero-image-alt"');
     expect(template).toContain('i18n-aria-label="@@header-navigation"');
     expect(template).toContain('i18n="@@locale-switch-text"');
+    expect(template).toContain('i18n="@@header-whatsapp-action"');
+    expect(template).toContain('i18n-aria-label="@@header-whatsapp-action-label"');
+    expect(template).toContain('i18n-title="@@header-whatsapp-action-title"');
+    expect(template).toContain('i18n="@@hero-whatsapp-action"');
+    expect(template).toContain('i18n-aria-label="@@hero-whatsapp-action-label"');
+    expect(template).toContain('i18n-title="@@hero-whatsapp-action-title"');
     expect(template).toContain('i18n-href="@@locale-switch-href"');
     expect(template).toContain('i18n-title="@@locale-switch-title"');
     expect(template).toContain('i18n="@@video-fallback"');
@@ -407,30 +413,40 @@ describe('App', () => {
       'process-step-three-title': 'Real connection',
       'quality-eyebrow': 'A well-crafted pause',
       'contact-title': 'From Palmichal de Acosta, let’s connect.',
+      'header-whatsapp-action': 'Message us',
+      'header-whatsapp-action-label': 'Message us on WhatsApp (opens in a new tab)',
+      'hero-whatsapp-action': 'Message us',
+      'hero-whatsapp-action-title': 'Message us on WhatsApp (opens in a new tab)',
+      'contact-copy': 'To learn about Café Artesano or ask about availability, message us on WhatsApp. We will be glad to help.',
+      'phone-label': 'Phone',
       'scroll-top-label': 'Back to top',
       'scroll-top-title': 'Back to top',
     });
   });
 
-  it('exposes corrected Costa Rican contact details without the retired number', () => {
+  it('exposes the corrected phone number as non-interactive secondary contact information without the retired number', () => {
     const page = createPage();
-    const phoneLinks = Array.from(page.querySelectorAll<HTMLAnchorElement>('a[href="tel:+50671606734"]'));
+    const phone = page.querySelector<HTMLElement>('#contacto .phone-link');
 
-    expect(phoneLinks).toHaveLength(3);
-    expect(phoneLinks.some((link) => link.textContent?.includes('Hablemos de café'))).toBe(true);
-    expect(phoneLinks.some((link) => link.textContent?.includes('Llámenos'))).toBe(true);
-    expect(phoneLinks.some((link) => link.textContent?.includes('7160-6734'))).toBe(true);
+    expect(page.querySelectorAll('a[href^="tel:"]')).toHaveLength(0);
+    expect(phone?.tagName).toBe('P');
+    expect(phone?.textContent?.trim()).toBe('Teléfono7160-6734');
     expect(page.innerHTML).not.toContain(['7160', '6164'].join('-'));
     expect(page.innerHTML).not.toContain(`tel:+506${['7160', '6164'].join('')}`);
     expect(page.textContent).toContain('Palmichal de Acosta');
   });
 
-  it('uses explicit primary CTA classes for corrected call labels', () => {
+  it('uses exactly two primary WhatsApp messaging CTAs with conventional new-tab accessible anchors', () => {
     const page = createPage();
-    const primaryCtas = Array.from(page.querySelectorAll<HTMLAnchorElement>('a.cta-primary[href="tel:+50671606734"]'));
+    const primaryCtas = Array.from(page.querySelectorAll<HTMLAnchorElement>('a.cta-primary'));
 
     expect(primaryCtas).toHaveLength(2);
-    expect(primaryCtas.map((cta) => cta.textContent?.trim())).toEqual(['Llámenos', 'Hablemos de café']);
+    expect(primaryCtas.map((cta) => cta.textContent?.trim())).toEqual(['Escríbenos', 'Escríbenos']);
+    expect(primaryCtas.every((cta) => cta.href === 'https://wa.me/50671606734')).toBe(true);
+    expect(primaryCtas.every((cta) => cta.target === '_blank' && cta.rel === 'noopener')).toBe(true);
+    expect(primaryCtas.every((cta) => cta.getAttribute('aria-label') === 'Escríbenos por WhatsApp (se abre en una pestaña nueva)')).toBe(true);
+    expect(primaryCtas.every((cta) => cta.title === 'Escríbenos por WhatsApp (se abre en una pestaña nueva)')).toBe(true);
+    expect(primaryCtas.every((cta) => !cta.hasAttribute('(click)'))).toBe(true);
   });
 
   it('offers accessible Facebook and WhatsApp navigation without unsupported social profiles', () => {
@@ -446,6 +462,12 @@ describe('App', () => {
     expect(socialLinks.every((link) => link.target === '_blank' && link.rel === 'noopener')).toBe(true);
     expect(socialLinks.every((link) => link.getAttribute('aria-label')?.includes('se abre en una pestaña nueva'))).toBe(true);
     expect(socialLinks.every((link) => link.className.includes('min-h-11'))).toBe(true);
+    const whatsappLinks = Array.from(page.querySelectorAll<HTMLAnchorElement>('a[href="https://wa.me/50671606734"]'));
+    expect(whatsappLinks).toHaveLength(3);
+    expect(whatsappLinks.every((link) => link.target === '_blank' && link.rel === 'noopener')).toBe(true);
+    expect(whatsappLinks.every((link) => link.getAttribute('aria-label')?.includes('WhatsApp'))).toBe(true);
+    expect(whatsappLinks.every((link) => link.getAttribute('aria-label')?.includes('se abre en una pestaña nueva'))).toBe(true);
+    expect(whatsappLinks.every((link) => link.title.includes('WhatsApp') || link.textContent?.trim() === 'WhatsApp')).toBe(true);
     expect(page.innerHTML.toLowerCase()).not.toContain('instagram');
   });
 

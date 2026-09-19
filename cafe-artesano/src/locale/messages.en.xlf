@@ -16,11 +16,15 @@
     <unit id="locale-switch-aria-label"><segment><source>Cambiar el idioma a inglés</source><target>Change language to Spanish</target></segment></unit>
     <unit id="locale-switch-title"><segment><source>Ver esta página en inglés</source><target>View this page in Spanish</target></segment></unit>
     <unit id="locale-switch-text"><segment><source>English</source><target>Español</target></segment></unit>
-    <unit id="header-call-action"><segment><source>Llámenos</source><target>Call us</target></segment></unit>
+    <unit id="header-whatsapp-action-label"><segment><source>Escríbenos por WhatsApp (se abre en una pestaña nueva)</source><target>Message us on WhatsApp (opens in a new tab)</target></segment></unit>
+    <unit id="header-whatsapp-action-title"><segment><source>Escríbenos por WhatsApp (se abre en una pestaña nueva)</source><target>Message us on WhatsApp (opens in a new tab)</target></segment></unit>
+    <unit id="header-whatsapp-action"><segment><source>Escríbenos</source><target>Message us</target></segment></unit>
     <unit id="hero-eyebrow"><segment><source>Café de altura · Costa Rica</source><target>High-altitude coffee · Costa Rica</target></segment></unit>
     <unit id="hero-title"><segment><source>Café Artesano: origen que se disfruta en cada taza.</source><target>Café Artesano: an origin to savor in every cup.</target></segment></unit>
     <unit id="hero-lead"><segment><source> Cultivamos y tostamos café con calma, respetando la tierra de Palmichal de Acosta y el carácter natural de cada grano. </source><target> We grow and roast coffee patiently, respecting the land of Palmichal de Acosta and the natural character of every bean. </target></segment></unit>
-    <unit id="hero-contact-action"><segment><source>Hablemos de café</source><target>Let’s talk coffee</target></segment></unit>
+    <unit id="hero-whatsapp-action-label"><segment><source>Escríbenos por WhatsApp (se abre en una pestaña nueva)</source><target>Message us on WhatsApp (opens in a new tab)</target></segment></unit>
+    <unit id="hero-whatsapp-action-title"><segment><source>Escríbenos por WhatsApp (se abre en una pestaña nueva)</source><target>Message us on WhatsApp (opens in a new tab)</target></segment></unit>
+    <unit id="hero-whatsapp-action"><segment><source>Escríbenos</source><target>Message us</target></segment></unit>
     <unit id="hero-origin-action"><segment><source>Conozca nuestro origen</source><target>Discover our origin</target></segment></unit>
     <unit id="hero-image-alt"><segment><source>Cerezas de café maduras entre hojas verdes</source><target>Ripe coffee cherries among green leaves</target></segment></unit>
     <unit id="brand-lockup-alt"><segment><source>Logotipo completo de Café Artesano</source><target>Full Café Artesano logo</target></segment></unit>
@@ -52,7 +56,7 @@
     <unit id="video-caption"><segment><source>Video vertical de Café Artesano en Palmichal de Acosta.</source><target>Vertical Café Artesano video from Palmichal de Acosta.</target></segment></unit>
     <unit id="contact-eyebrow"><segment><source>Estamos cerca</source><target>We are close by</target></segment></unit>
     <unit id="contact-title"><segment><source>Conversemos desde Palmichal de Acosta.</source><target>From Palmichal de Acosta, let’s connect.</target></segment></unit>
-    <unit id="contact-copy"><segment><source>Para conocer Café Artesano o consultar disponibilidad, llámenos. Será un gusto atenderle.</source><target>To learn about Café Artesano or ask about availability, call us. We will be glad to help.</target></segment></unit>
+    <unit id="contact-copy"><segment><source>Para conocer Café Artesano o consultar disponibilidad, escríbanos por WhatsApp. Será un gusto atenderle.</source><target>To learn about Café Artesano or ask about availability, message us on WhatsApp. We will be glad to help.</target></segment></unit>
     <unit id="phone-label"><segment><source>Teléfono</source><target>Phone</target></segment></unit>
     <unit id="contact-location"><segment><source>Palmichal de Acosta, Costa Rica</source><target>Palmichal de Acosta, Costa Rica</target></segment></unit>
     <unit id="social-navigation"><segment><source>Redes sociales de Café Artesano</source><target>Café Artesano social media</target></segment></unit>
