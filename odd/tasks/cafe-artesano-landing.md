@@ -21,6 +21,7 @@ The Angular 22 application still shows the generated starter screen. The busines
 - Replace the footer's textual “Volver al inicio” treatment with an accessible arrow icon control and animate its scroll-to-top behavior through GSAP, with an immediate reduced-motion fallback.
 - Start the existing video muted when at least 25% visible, pause it when it leaves that threshold, preserve user controls/audio opt-in, and disable automatic playback for reduced-motion users.
 - Download and locally serve one suitable free/open hero media asset, retaining source and license provenance and optimizing its delivery.
+- Add system-aware light/dark themes with an accessible manual selector and persisted user preference; both themes must retain the accepted contrast targets.
 
 ## Non-goals
 
@@ -47,6 +48,7 @@ The Angular 22 application still shows the generated starter screen. The busines
 | Motion expansion | By explicit user request, add GSAP and parallax as a separate work unit. Motion must progressively enhance the page, avoid layout shifts, preserve content without JavaScript, and fully opt out under `prefers-reduced-motion`. The footer scroll-to-top text must become an icon-based control with an accessible name; GSAP handles the animated scroll while reduced-motion uses immediate navigation. |
 | External hero media | The user explicitly authorized downloading and integrating a suitable free asset. Prefer the recommended Unsplash coffee-cherries still for efficient image parallax unless research verifies that the Pexels Costa Rica video is both technically and legally superior. Store the source URL and license provenance in `DESIGN.md`. |
 | Video visibility behavior | By explicit user choice, use a 25% visibility threshold: start playback muted, pause below the threshold, keep native controls for audio opt-in, handle blocked `play()` safely, clean up the observer, and skip automatic playback under `prefers-reduced-motion`. |
+| Theme behavior | By explicit user choice, initialize from `prefers-color-scheme`, provide an accessible light/dark selector, and persist the user's override. Both themes must independently meet the accepted text and non-text contrast thresholds. |
 
 ## Workload forecast
 
@@ -59,6 +61,7 @@ Estimated total: 430–650 authored changed lines, excluding existing assets.
 | CA-3 | Verify build/tests, inspect the result, reconcile documentation, and prepare the work-unit boundary. | Delegated verification according to native assessment; parent performs structural readback. | Evidence-only |
 | CA-4 | Correct contact data and harden the palette, documentation, component states, and tests to WCAG 2.2 AAA contrast targets. | Delegated writer: design-system plus multi-file implementation. | 80–140 |
 | CA-5 | Download and integrate licensed hero media; add GSAP with restrained parallax/scroll motion, Angular lifecycle-safe cleanup, reduced-motion opt-out, and focused tests. | Research first, then delegated writer: asset, dependency, and multi-file motion integration. | 160–280 |
+| CA-6 | Add system-aware light/dark themes, accessible selector, persistence, pre-render theme bootstrap, dual-theme contrast evidence, and tests. | Delegated writer: design tokens plus multi-file behavior. Execute before CA-5 so motion controls inherit final theme tokens. | 140–240 |
 
 ## Checklist
 
@@ -94,6 +97,13 @@ Estimated total: 430–650 authored changed lines, excluding existing assets.
   - [ ] Disable motion and automatic video playback cleanly for `prefers-reduced-motion` and small/low-power contexts where appropriate.
   - [ ] Clean up all GSAP contexts/triggers on component destruction and cover behavior with focused tests.
   - [ ] Re-run tests, production build, and independent verification.
+- [ ] **CA-6 — System-aware light/dark themes**
+  - [ ] Define complete semantic light and dark token sets with measured contrast evidence.
+  - [ ] Initialize from system preference without a flash of the wrong theme where practical.
+  - [ ] Add an accessible icon control that announces its current state/action and meets 44px sizing.
+  - [ ] Persist an explicit user choice and react safely to system changes when no override exists.
+  - [ ] Cover initialization, toggle, persistence, and contrast-critical markup with focused tests.
+  - [ ] Re-run tests, production build, and independent verification before CA-5.
 
 ## Acceptance criteria
 
@@ -129,7 +139,9 @@ Estimated total: 430–650 authored changed lines, excluding existing assets.
 - The user reconfirmed that AAA contrast applies to all textual UI, including buttons and links. For non-text UI, the accepted policy is the applicable W3C 3:1 criterion rather than a nonstandard 7:1 extension.
 - Screenshot evidence showed the footer scroll-to-top affordance rendered as visible text (`Volver al inicio↑`). The user requested an icon instead and GSAP-powered animation; this correction is included in CA-5.
 - The user chose muted visibility-driven video playback: begin at 25% visible, pause below the threshold, retain native controls, and do not auto-play for reduced-motion users.
+- Independent CA-4 verification confirmed every interactive text label exceeds 7:1, but found the translucent sticky-header border below 3:1 (2.45–2.95:1) and a near-threshold line/hero boundary. User visual feedback also reported that `Llámenos` and `Hablemos de café` text was not reliably visible despite authored ratios; CA-4 remains open for explicit rendered button classes and safer non-text contrast margins.
+- The user selected system preference plus an accessible persisted selector for light/dark mode. This is tracked as CA-6 and will execute before CA-5.
 
 ## Next step
 
-Complete and verify CA-4 while a read-only mapper researches Angular 22 + GSAP lifecycle, cleanup, performance, and reduced-motion practices for CA-5.
+Correct the CA-4 rendered-button and header-border findings, reverify CA-4, then implement and verify CA-6 before the already researched CA-5 motion/media work.
