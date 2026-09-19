@@ -177,6 +177,21 @@ GSAP progressively enhances already-visible content only after Angular renders i
 
 All hero variants are served locally; the page does not hotlink Unsplash at runtime.
 
+### Social sharing and search discovery
+
+The temporary canonical origin is `https://cafeartesanocr.netlify.app/`. It is used consistently by the canonical link, Open Graph image and URL, X/Twitter card image, Organization JSON-LD, `robots.txt`, and `sitemap.xml`. When a custom domain is adopted, migrate every absolute SEO URL together rather than mixing origins.
+
+| Topic | Record |
+| --- | --- |
+| Social preview file | `public/cafe-artesano-social.jpg` |
+| Format and dimensions | JPEG, 1200 × 630 pixels |
+| Provenance | Local derivative of the official Unsplash CDN crop: `https://images.unsplash.com/photo-1612668196612-70262cad2ad7?ixlib=rb-4.1.0&fm=jpg&fit=crop&crop=entropy&w=1200&h=630&q=85` |
+| Published URL | `https://cafeartesanocr.netlify.app/cafe-artesano-social.jpg` |
+| Alternative text | `Cerezas maduras de café en la planta` describes the coffee-cherry image without claiming it contains a logo. |
+| Delivery rule | Serve this local public asset in metadata; do not hotlink the Unsplash image at runtime. |
+| Discovery files | `public/robots.txt` allows crawling and points to the absolute sitemap; `public/sitemap.xml` lists only the canonical root URL. |
+| Structured identity | One `Organization` JSON-LD record identifies Café Artesano as a Costa Rican coffee brand with its canonical ID, local logo URL, telephone, Costa Rica service area, and official Facebook profile only. |
+
 ## Accessibility and component patterns
 
 - Apply the documented WCAG 2.2 AAA **contrast** targets; this does not certify full AAA conformance across all success criteria. Use semantic landmarks and keep focus visible with `--ca-focus`.

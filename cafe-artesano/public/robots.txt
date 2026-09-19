@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://cafeartesanocr.netlify.app/sitemap.xml

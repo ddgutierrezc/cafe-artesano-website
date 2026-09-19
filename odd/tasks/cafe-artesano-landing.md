@@ -22,6 +22,7 @@ The Angular 22 application still shows the generated starter screen. The busines
 - Start the existing video muted when at least 25% visible, pause it when it leaves that threshold, preserve user controls/audio opt-in, and disable automatic playback for reduced-motion users.
 - Download and locally serve one suitable free/open hero media asset, retaining source and license provenance and optimizing its delivery.
 - Add system-aware light/dark themes with an accessible manual selector and persisted user preference; both themes must retain the accepted contrast targets.
+- Add production-grade technical SEO, social sharing metadata, structured data, robots/sitemap discovery, and accessible Facebook/WhatsApp links using the temporary Netlify URL.
 
 ## Non-goals
 
@@ -49,6 +50,8 @@ The Angular 22 application still shows the generated starter screen. The busines
 | External hero media | The user explicitly authorized downloading and integrating a suitable free asset. Prefer the recommended Unsplash coffee-cherries still for efficient image parallax unless research verifies that the Pexels Costa Rica video is both technically and legally superior. Store the source URL and license provenance in `DESIGN.md`. |
 | Video visibility behavior | By explicit user choice, use a 25% visibility threshold: start playback muted, pause below the threshold, keep native controls for audio opt-in, handle blocked `play()` safely, clean up the observer, and skip automatic playback under `prefers-reduced-motion`. |
 | Theme behavior | By explicit user choice, initialize from `prefers-color-scheme`, provide an accessible light/dark selector, and persist the user's override. Both themes must independently meet the accepted text and non-text contrast thresholds. |
+| Temporary canonical URL | Use `https://cafeartesanocr.netlify.app/` for canonical, Open Graph, sitemap, robots, and structured data until a custom domain is available. Replace all absolute SEO URLs together when migrating domains. |
+| Social identity | Facebook is `https://www.facebook.com/cafeartesanopalmichal`; no Instagram profile is claimed. WhatsApp uses `https://wa.me/50671606734`. Structured data describes Café Artesano as an `Organization`/coffee brand, not a physical café. |
 
 ## Workload forecast
 
@@ -62,6 +65,7 @@ Estimated total: 430–650 authored changed lines, excluding existing assets.
 | CA-4 | Correct contact data and harden the palette, documentation, component states, and tests to WCAG 2.2 AAA contrast targets. | Delegated writer: design-system plus multi-file implementation. | 80–140 |
 | CA-5 | Download and integrate licensed hero media; add GSAP with restrained parallax/scroll motion, Angular lifecycle-safe cleanup, reduced-motion opt-out, and focused tests. | Research first, then delegated writer: asset, dependency, and multi-file motion integration. | 160–280 |
 | CA-6 | Add system-aware light/dark themes, accessible selector, persistence, pre-render theme bootstrap, dual-theme contrast evidence, and tests. | Delegated writer: design tokens plus multi-file behavior. Execute before CA-5 so motion controls inherit final theme tokens. | 140–240 |
+| CA-7 | Add canonical/meta/OG/Twitter metadata, Organization JSON-LD, robots.txt, sitemap.xml, social preview media, accessible Facebook/WhatsApp links, and deployment-aware SEO documentation/tests. | Delegated writer: multi-file metadata/public-assets/content integration. | 120–220 |
 
 ## Checklist
 
@@ -87,18 +91,18 @@ Estimated total: 430–650 authored changed lines, excluding existing assets.
   - [x] Adjust design tokens and hard-coded component colors where required to meet the chosen AAA contrast scope.
   - [x] Update focused tests for the corrected phone and critical accessibility behavior.
   - [x] Re-run tests, production build, and independent verification.
-- [ ] **CA-5 — GSAP parallax and motion polish** *(in progress)*
-  - [ ] Research current GSAP and Angular 22 lifecycle integration guidance.
-  - [ ] Download one verified free hero asset into `cafe-artesano/public/`, record its source/license, dimensions, and purpose, and optimize it for web delivery.
-  - [ ] Integrate the supplied `public/LOGOTIPO CA.svg` for scalable large-format brand presentation while retaining or deriving a compact mark for small header use.
-  - [ ] Create a dedicated compact SVG favicon from the supplied vector mark, retain `favicon.ico` as fallback, update metadata, and verify legibility at small sizes.
-  - [ ] Install a compatible GSAP release and integrate it without a component library.
-  - [ ] Add restrained parallax/scroll reveals without hiding essential content before JavaScript runs.
-  - [ ] Replace “Volver al inicio” text with an accessible arrow icon control and GSAP-powered scroll-to-top animation.
-  - [ ] Auto-play the existing video muted at 25% visibility, pause it below threshold, preserve controls, and cover observer cleanup/behavior with tests.
-  - [ ] Disable motion and automatic video playback cleanly for `prefers-reduced-motion` and small/low-power contexts where appropriate.
-  - [ ] Clean up all GSAP contexts/triggers on component destruction and cover behavior with focused tests.
-  - [ ] Re-run tests, production build, and independent verification.
+- [x] **CA-5 — GSAP parallax and motion polish**
+  - [x] Research current GSAP and Angular 22 lifecycle integration guidance.
+  - [x] Download one verified free hero asset into `cafe-artesano/public/`, record its source/license, dimensions, and purpose, and optimize it for web delivery.
+  - [x] Integrate the supplied `public/LOGOTIPO CA.svg` for scalable large-format brand presentation while retaining or deriving a compact mark for small header use.
+  - [x] Create a dedicated compact SVG favicon from the supplied vector mark, retain `favicon.ico` as fallback, update metadata, and verify legibility at small sizes.
+  - [x] Install a compatible GSAP release and integrate it without a component library.
+  - [x] Add restrained parallax/scroll reveals without hiding essential content before JavaScript runs.
+  - [x] Replace “Volver al inicio” text with an accessible arrow icon control and GSAP-powered scroll-to-top animation.
+  - [x] Auto-play the existing video muted at 25% visibility, pause it below threshold, preserve controls, and cover observer cleanup/behavior with tests.
+  - [x] Disable motion and automatic video playback cleanly for `prefers-reduced-motion` and small/low-power contexts where appropriate.
+  - [x] Clean up all GSAP contexts/triggers on component destruction and cover behavior with focused tests.
+  - [x] Re-run tests, production build, and independent verification.
 - [x] **CA-6 — System-aware light/dark themes**
   - [x] Define complete semantic light and dark token sets with measured contrast evidence.
   - [x] Initialize from system preference without a flash of the wrong theme where practical.
@@ -106,6 +110,13 @@ Estimated total: 430–650 authored changed lines, excluding existing assets.
   - [x] Persist an explicit user choice and react safely to system changes when no override exists.
   - [x] Cover initialization, toggle, persistence, and contrast-critical markup with focused tests.
   - [x] Re-run tests, production build, and whitespace/component-CSS checks before CA-5.
+- [ ] **CA-7 — SEO, social sharing, and discoverability** *(research in progress)*
+  - [ ] Add canonical, robots, title/description, Open Graph, Twitter Card, locale, image dimensions/alt, and mobile metadata using the temporary Netlify URL.
+  - [ ] Add valid `Organization` JSON-LD with brand, logo, contact, area, Facebook `sameAs`, and no unverified physical-café claims.
+  - [ ] Add `public/robots.txt` and absolute `public/sitemap.xml`; ensure both reach the final publish directory.
+  - [ ] Create/use an optimized social preview image with documented dimensions and absolute URL.
+  - [ ] Add accessible Facebook and WhatsApp links without inventing Instagram.
+  - [ ] Add focused metadata/links tests and verify production output contains all discovery files.
 
 ## Acceptance criteria
 
@@ -155,7 +166,9 @@ Estimated total: 430–650 authored changed lines, excluding existing assets.
 - CA-5 installed `gsap@3.15.0`, downloaded three verified local WebP hero variants (768×512, 1280×853, 1600×1067), integrated the supplied vector identity/favicon, added progressive parallax/reveals, icon-only ScrollToPlugin navigation, and 25%-visible muted video playback. Writer checks passed with 14/14 tests, clean build, and 111-byte component CSS.
 - Independent CA-5 verification found two MEDIUM gaps and two LOW refinements: literal no-JavaScript essential content was absent; tests did not exercise actual GSAP module registration/options/late-import guards; mobile/reduced-motion contexts imported GSAP before declining motion; and compact header/favicon art retained unreadably small text. CA-5 remains open for focused correction.
 - Parent verification separately confirmed the Unsplash source redirect, 2000×1335 original, official download filename identifying Juliana Barquero, and current Unsplash license page; the app serves only local derivatives.
+- CA-5 correction added a semantic no-script fallback, pre-import mobile/reduced-motion gating, deterministic real GSAP module-mock coverage, and text-free compact header/favicon artwork. Independent reverification found no severity findings; 16/16 tests and production build passed, GSAP resolved at 3.15.0, and `app.css` remained 111 bytes.
+- Parent Angular CLI MCP spot check passed after final CA-5 correction: 249.38 kB initial bundle / 67.63 kB estimated transfer, with GSAP retained in lazy chunks.
 
 ## Next step
 
-Correct CA-5 with a semantic no-script essential-content fallback, real mocked GSAP integration tests, pre-import motion gating, and text-free compact header/favicon artwork. Then re-run independent verification and the parent Angular MCP spot check.
+Research current primary-source SEO/social requirements for CA-7, then delegate the exact metadata, structured-data, discovery-file, preview-media, and accessible social-link implementation.

@@ -233,6 +233,22 @@ describe('App', () => {
     expect(primaryCtas.map((cta) => cta.textContent?.trim())).toEqual(['Llámenos', 'Hablemos de café']);
   });
 
+  it('offers accessible Facebook and WhatsApp navigation without unsupported social profiles', () => {
+    const page = createPage();
+    const socialNavigation = page.querySelector<HTMLElement>('#contacto nav[aria-label="Redes sociales de Café Artesano"]');
+    const socialLinks = Array.from(socialNavigation?.querySelectorAll<HTMLAnchorElement>('a') ?? []);
+
+    expect(socialLinks.map((link) => link.textContent?.trim())).toEqual(['Facebook', 'WhatsApp']);
+    expect(socialLinks.map((link) => link.getAttribute('href'))).toEqual([
+      'https://www.facebook.com/cafeartesanopalmichal',
+      'https://wa.me/50671606734',
+    ]);
+    expect(socialLinks.every((link) => link.target === '_blank' && link.rel === 'noopener')).toBe(true);
+    expect(socialLinks.every((link) => link.getAttribute('aria-label')?.includes('se abre en una pestaña nueva'))).toBe(true);
+    expect(socialLinks.every((link) => link.className.includes('min-h-11'))).toBe(true);
+    expect(page.innerHTML.toLowerCase()).not.toContain('instagram');
+  });
+
   it('uses optimized local hero media, a text-free compact header mark, and the full hero lockup', () => {
     const page = createPage();
     const images = Array.from(page.querySelectorAll<HTMLImageElement>('img[ngsrc]'));
