@@ -175,11 +175,11 @@ Estimated cumulative scope: 800–1,250 authored changed lines, excluding existi
   - [x] Add a regression test that executes/detects the script through a filesystem symlink.
   - [x] Re-run 35+ tests, localized build, artifact verification, and symlinked CLI simulation.
   - [x] Publish the correction and inspect the subsequent Netlify deployment; this disproved symlink detection as the only live cause and opened CA-14.
-- [ ] **CA-14 — Netlify monorepo configuration precedence** *(in progress)*
-  - [ ] Add package-directory `cafe-artesano/netlify.toml` that runs `npm run build` and publishes `dist/cafe-artesano/browser`.
-  - [ ] Delete `cafe-artesano/src/_redirects` so Netlify cannot restore the global Spanish SPA fallback.
-  - [ ] Test root/package configuration agreement and absence of source/generated catch-all redirects.
-  - [ ] Publish and verify deploy summary reports no redirect, `/en/` static metadata is English, legacy icon URLs and unknown routes return 404.
+- [x] **CA-14 — Netlify monorepo configuration precedence**
+  - [x] Add package-directory `cafe-artesano/netlify.toml` that runs `npm run build` and publishes `dist/cafe-artesano/browser`.
+  - [x] Delete `cafe-artesano/src/_redirects` so Netlify cannot restore the global Spanish SPA fallback.
+  - [x] Test root/package configuration agreement and absence of source/generated catch-all redirects.
+  - [x] Publish and verify deploy summary reports no redirect, `/en/` static metadata is English, legacy icon URLs and unknown routes return 404.
 
 ## Acceptance criteria
 
@@ -256,8 +256,10 @@ Estimated cumulative scope: 800–1,250 authored changed lines, excluding existi
 - Diagnosis reproduced the CI failure locally: invoking `scripts/localize-static-seo.mjs` through a symlink exited 0 without output because its raw `process.argv[1] === fileURLToPath(import.meta.url)` guard evaluated false. Netlify uses symlinked build workspace paths, so the Angular build deployed successfully while silently skipping post-build localization.
 - CA-13 replaced raw comparison with canonical `realpathSync` detection and added genuine filesystem-symlink coverage. Independent verification found no severity findings: 36/36 tests, localized build, normal check, actual symlinked check with validator log, whitespace, and exact changed scope all pass.
 - Commit `f71f780` published CA-13 and Netlify deploy `6aaeb038f5ba680008266380` reached ready state, but reported all output files unchanged and still processed one redirect. Live `/en/` metadata/noscript remained Spanish; missing routes and removed legacy favicon URLs returned the Spanish root with HTTP 200.
-- The surviving rule is `cafe-artesano/src/_redirects` (`/* /index.html 200`). Netlify monorepo documentation says package/base-directory configuration takes precedence over repository-root config, explaining why the root `npm run build` command can be bypassed. CA-14 adds authoritative package-local config and deletes the stale redirect.
+- The surviving rule was `cafe-artesano/src/_redirects` (`/* /index.html 200`). Netlify monorepo documentation says package/base-directory configuration takes precedence over repository-root config, explaining why the root `npm run build` command was bypassed.
+- CA-14 added authoritative `cafe-artesano/netlify.toml`, deleted the stale redirect, and aligned root/package tests. Independent verification found no severity findings; 36/36 tests, localized build, artifact validation, redirect absence, and exact scope passed.
+- Commit `8e5e5af` deployed successfully as Netlify deploy `6aaeb25620a53100086fd71d`. The deploy summary reports no redirect rules. Live `/en/` now has English title, `/en/` canonical, `en_US` Open Graph locale, English Organization description/noscript; `/` remains Spanish. The CA SVG returns 200, both legacy favicon URLs return 404, and an unknown English route returns 404.
 
 ## Next step
 
-Implement and verify CA-14, publish it, and require live evidence: Netlify deploy summary with no redirect rule, English metadata/noscript at `/en/`, and 404 responses for unknown routes plus removed favicon names. Then hard-refresh both locales, visually review motion/theme/video/favicon, verify live discovery assets, and run Google Rich Results plus Facebook Sharing Debugger. Migrate all absolute URLs together when a custom domain is available.
+Hard-refresh `/` and `/en/` and visually review responsive layout, theme switching, parallax, video behavior, locale navigation, and the CA favicon in a real browser. Then run Google Rich Results and Facebook Sharing Debugger. Migrate all absolute URLs together when a custom domain is available.
