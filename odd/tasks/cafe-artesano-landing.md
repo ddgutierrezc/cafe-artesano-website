@@ -65,7 +65,7 @@ The Angular 22 application still shows the generated starter screen. The busines
 | Localized deployment | Netlify serves physical `/index.html` and `/en/index.html` artifacts. Remove the unnecessary global SPA fallback for this anchor-only landing so unknown English URLs cannot silently receive Spanish HTML. |
 | Favicon identity | Replace the generic flower with a square, legible CA monogram based on the supplied `Recurso 5.png`; use a new versioned filename to invalidate browser favicon caches and reuse it as the compact header mark. |
 | CI CLI identity | The post-build localizer must identify direct execution by canonical real path, not raw `process.argv[1]` equality. Netlify invokes repository commands through symlinked build paths; the raw-path guard silently skipped `main()` while exiting successfully, leaving `/en/` metadata Spanish despite local verification. |
-| Netlify monorepo config | Netlify resolves configuration from package directory, then base directory, then repository root. Add `cafe-artesano/netlify.toml` beside `package.json` with `npm run build` and the local publish path; keep the root config as repository fallback. Delete `src/_redirects` so no hidden `/* /index.html 200` rule survives framework processing. |
+| Netlify monorepo config | Netlify resolves configuration from package directory, then base directory, then repository root. This site uses `cafe-artesano` as package directory while base remains repository root, so package-local config paths/commands must still be root-relative: `cd cafe-artesano && npm run build` and `cafe-artesano/dist/cafe-artesano/browser`. Keep the root config as fallback and delete `src/_redirects`. |
 
 ## Workload forecast
 
@@ -175,11 +175,11 @@ Estimated cumulative scope: 800–1,250 authored changed lines, excluding existi
   - [x] Add a regression test that executes/detects the script through a filesystem symlink.
   - [x] Re-run 35+ tests, localized build, artifact verification, and symlinked CLI simulation.
   - [x] Publish the correction and inspect the subsequent Netlify deployment; this disproved symlink detection as the only live cause and opened CA-14.
-- [x] **CA-14 — Netlify monorepo configuration precedence**
-  - [x] Add package-directory `cafe-artesano/netlify.toml` that runs `npm run build` and publishes `dist/cafe-artesano/browser`.
+- [ ] **CA-14 — Netlify monorepo configuration precedence** *(root-relative package config correction in progress)*
+  - [ ] Configure package-directory `cafe-artesano/netlify.toml` for repository-root execution: `cd cafe-artesano && npm run build`, publishing `cafe-artesano/dist/cafe-artesano/browser`.
   - [x] Delete `cafe-artesano/src/_redirects` so Netlify cannot restore the global Spanish SPA fallback.
-  - [x] Test root/package configuration agreement and absence of source/generated catch-all redirects.
-  - [x] Publish and verify deploy summary reports no redirect, `/en/` static metadata is English, legacy icon URLs and unknown routes return 404.
+  - [ ] Test root/package configuration agreement against Netlify's documented package-directory/base-directory semantics.
+  - [ ] Publish again and verify the latest deploy succeeds, reports no redirects, preserves English `/en/` metadata, and keeps 404 behavior.
 
 ## Acceptance criteria
 
@@ -258,8 +258,9 @@ Estimated cumulative scope: 800–1,250 authored changed lines, excluding existi
 - Commit `f71f780` published CA-13 and Netlify deploy `6aaeb038f5ba680008266380` reached ready state, but reported all output files unchanged and still processed one redirect. Live `/en/` metadata/noscript remained Spanish; missing routes and removed legacy favicon URLs returned the Spanish root with HTTP 200.
 - The surviving rule was `cafe-artesano/src/_redirects` (`/* /index.html 200`). Netlify monorepo documentation says package/base-directory configuration takes precedence over repository-root config, explaining why the root `npm run build` command was bypassed.
 - CA-14 added authoritative `cafe-artesano/netlify.toml`, deleted the stale redirect, and aligned root/package tests. Independent verification found no severity findings; 36/36 tests, localized build, artifact validation, redirect absence, and exact scope passed.
-- Commit `8e5e5af` deployed successfully as Netlify deploy `6aaeb25620a53100086fd71d`. The deploy summary reports no redirect rules. Live `/en/` now has English title, `/en/` canonical, `en_US` Open Graph locale, English Organization description/noscript; `/` remains Spanish. The CA SVG returns 200, both legacy favicon URLs return 404, and an unknown English route returns 404.
+- Commit `8e5e5af` deployed successfully as Netlify deploy `6aaeb25620a53100086fd71d`. The deploy summary reports no redirect rules. Live `/en/` has English title, `/en/` canonical, `en_US` Open Graph locale, English Organization description/noscript; `/` remains Spanish. The CA SVG returns 200, both legacy favicon URLs return 404, and an unknown English route returns 404.
+- The following documentation-only commit `b8414d1` failed its Netlify build immediately. Netlify's monorepo docs clarify that package-directory config is selected first but build commands/publish paths remain relative to the base directory, which is repository root when unset. The initial package-local values were therefore wrong for future builds. CA-14 is reopened to use explicit repository-root-relative command/publish values.
 
 ## Next step
 
-Hard-refresh `/` and `/en/` and visually review responsive layout, theme switching, parallax, video behavior, locale navigation, and the CA favicon in a real browser. Then run Google Rich Results and Facebook Sharing Debugger. Migrate all absolute URLs together when a custom domain is available.
+Correct and publish the repository-root-relative package config, then require a successful latest Netlify deploy with the already-correct live locale/404 matrix. Afterward hard-refresh both locales, visually review responsive layout, theme switching, parallax, video behavior, locale navigation, and favicon; run Google Rich Results and Facebook Sharing Debugger; migrate all absolute URLs together with a custom domain.

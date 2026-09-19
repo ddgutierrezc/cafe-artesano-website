@@ -294,26 +294,31 @@ describe('static SEO and deployment artifacts', () => {
     expect(readIndexDocument().head.querySelector('link[rel="icon"]')?.getAttribute('href')).toBe('/cafe-artesano-ca-v1.svg');
   });
 
-  it('maps physical localized build artifacts to authoritative package-local Netlify settings without a global SPA fallback', () => {
+  it('maps physical localized build artifacts to Netlify package-config semantics without a global SPA fallback', () => {
     const angular = JSON.parse(readText('angular.json')) as { projects: Record<string, { architect: { build: { options: { assets: Array<{ glob: string; input: string }> } } } }> };
     const packageConfigPath = 'netlify.toml';
     const rootConfigPath = '../netlify.toml';
+    const repositoryRoot = resolve('..');
+    const packageDirectory = resolve(repositoryRoot, 'cafe-artesano');
     const packageConfig = readText(packageConfigPath);
     const rootConfig = readText(rootConfigPath);
     const packageBuildSettings = readNetlifyBuildSettings(packageConfig);
     const rootBuildSettings = readNetlifyBuildSettings(rootConfig);
     const packageScripts = JSON.parse(readText('package.json')) as { scripts: Record<string, string> };
-    const packagePublishRoot = resolve(packageBuildSettings['publish'] ?? '');
-    const rootEffectivePublishRoot = resolve('..', rootBuildSettings['base'] ?? '', rootBuildSettings['publish'] ?? '');
+    const packageEffectiveBuildCommand = packageBuildSettings['command'] ?? '';
+    const rootEffectiveBuildCommand = `cd ${rootBuildSettings['base'] ?? ''} && ${rootBuildSettings['command'] ?? ''}`;
+    const packageEffectivePublishRoot = resolve(repositoryRoot, packageBuildSettings['publish'] ?? '');
+    const rootEffectivePublishRoot = resolve(repositoryRoot, rootBuildSettings['base'] ?? '', rootBuildSettings['publish'] ?? '');
 
     expect(angular.projects['cafe-artesano']?.architect.build.options.assets).toContainEqual({ glob: '**/*', input: 'public' });
     expect(existsSync(packageConfigPath)).toBe(true);
     expect(existsSync(rootConfigPath)).toBe(true);
-    expect(packageBuildSettings).toEqual({ command: 'npm run build', publish: 'dist/cafe-artesano/browser' });
+    expect(packageBuildSettings).toEqual({ command: 'cd cafe-artesano && npm run build', publish: 'cafe-artesano/dist/cafe-artesano/browser' });
     expect(packageBuildSettings).not.toHaveProperty('base');
     expect(rootBuildSettings).toEqual({ base: 'cafe-artesano', command: 'npm run build', publish: 'dist/cafe-artesano/browser' });
-    expect(packagePublishRoot).toBe(resolve('dist/cafe-artesano/browser'));
-    expect(rootEffectivePublishRoot).toBe(packagePublishRoot);
+    expect(packageEffectiveBuildCommand).toBe(rootEffectiveBuildCommand);
+    expect(packageEffectivePublishRoot).toBe(resolve(packageDirectory, 'dist/cafe-artesano/browser'));
+    expect(rootEffectivePublishRoot).toBe(packageEffectivePublishRoot);
     expect(packageConfig).not.toMatch(/^\s*base\s*=/m);
     expect(packageConfig).not.toContain('redirect');
     expect(packageConfig).not.toContain('/*');
