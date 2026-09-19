@@ -1,0 +1,8 @@
+<footer class="bg-[var(--ca-footer-surface)] text-[var(--ca-on-dark)]">
+  <div class="site-shell mx-auto flex min-h-20 items-center justify-between gap-4 px-5 md:px-8">
+    <p class="m-0"><strong>Café Artesano</strong> · <span i18n="@@footer-location">Café de Palmichal de Acosta</span></p>
+    <button #scrollTopControl class="scroll-top-control inline-flex h-11 w-11 items-center justify-center rounded-lg border-2 border-[var(--ca-on-dark)] bg-[var(--ca-footer-surface)] p-2 text-[var(--ca-on-dark)]" [class.scroll-top-control--visible]="isScrollTopVisible()" [disabled]="!isScrollTopVisible()" [attr.aria-hidden]="isScrollTopVisible() ? null : 'true'" [attr.tabindex]="isScrollTopVisible() ? null : '-1'" type="button" (click)="scrollToTop($event)" aria-label="Volver al inicio" title="Volver al inicio" i18n-aria-label="@@scroll-top-label" i18n-title="@@scroll-top-title">
+      <svg class="h-5 w-5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 19V5" /><path d="m6 11 6-6 6 6" /></svg>
+    </button>
+  </div>
+</footer>

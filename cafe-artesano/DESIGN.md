@@ -221,6 +221,18 @@ Every landing-page string, translatable alternative text, fallback, caption, tit
 
 The compact header locale link is a conventional document navigation, not a router action. In the Spanish source output it links to `/en/`, has `hreflang="en"` and `lang="en"`, and announces English. The English translation localizes those attributes and label so it links back to `/`, has `hreflang="es-CR"` and `lang="es-CR"`, and announces Spanish. Do not add click interception, locale storage, runtime translation, or client-side locale routing.
 
+This anchor-only, physically localized site has no Angular Router or Forms dependency. Standalone components import only the Angular APIs they use; locale navigation and contact actions remain native document and external links rather than router or form workflows.
+
+### Header component contract
+
+`SiteHeader` owns the semantic header markup, localized navigation and CTA links, and the derived theme-control labels. It receives the current `Theme` through a required signal input and emits a void toggle event only; `App` remains the owner of theme persistence and document/chrome updates. `shared/theme/theme.model.ts` is the single source for the theme union, storage key, and browser-chrome colors.
+
+### Landing component contract
+
+`LandingPage` owns the single `<main id="contenido">` landmark, hero, landscape, origin, process, quality, and contact sections. It imports only `NgOptimizedImage` and `StoryVideo`; the static sections remain intentionally together rather than becoming presentation-only components. Its signal `viewChild()` references the hero image directly, and its component-scoped GSAP context applies only transform parallax from `yPercent: 5` to `yPercent: -5` with `scrub: 0.6` under the desktop no-reduced-motion query.
+
+`StoryVideo` owns the exact video section and its signal `viewChild()` lifecycle. An `IntersectionObserver` with threshold `0.25` mutes on first visible playback, safely absorbs rejected playback, pauses below threshold, and is disabled under reduced motion. Preference changes, unsupported observers, deferred render work, and destruction leave the native controls and static video markup available.
+
 ### Translator workflow
 
 1. Run `npm run extract:i18n` to regenerate the XLIFF 2 source catalog at `src/locale/messages.xlf` after changing marked content.

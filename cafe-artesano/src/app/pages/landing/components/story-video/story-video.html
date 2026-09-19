@@ -1,0 +1,16 @@
+<section class="section-video bg-[var(--ca-dark-surface)] py-[clamp(4rem,8vw,6rem)] text-[var(--ca-on-dark)]" aria-labelledby="video-title">
+  <div class="site-shell mx-auto grid items-center gap-8 px-5 md:grid-cols-2 md:gap-[clamp(3rem,7vw,6rem)] md:px-8">
+    <div class="video-copy">
+      <p class="eyebrow" i18n="@@video-eyebrow">Desde Palmichal</p>
+      <h2 id="video-title" i18n="@@video-title">Conozca el café detrás de nuestra historia.</h2>
+      <p i18n="@@video-copy">Este breve video muestra el entorno que inspira nuestro trabajo. Active los controles para reproducirlo cuando usted decida.</p>
+    </div>
+    <figure class="video-frame mx-auto max-w-[20rem]">
+      <video #brandVideo class="block h-auto w-full max-w-full rounded-2xl border border-[var(--ca-video-line)] bg-[var(--ca-video-surface)]" controls muted playsinline preload="metadata" aria-describedby="video-description">
+        <source src="video_cafe_artesano.mp4" type="video/mp4" />
+        <span i18n="@@video-fallback">Su navegador no permite reproducir este video. Puede contactarnos para conocer Café Artesano.</span>
+      </video>
+      <figcaption id="video-description" i18n="@@video-caption">Video vertical de Café Artesano en Palmichal de Acosta.</figcaption>
+    </figure>
+  </div>
+</section>

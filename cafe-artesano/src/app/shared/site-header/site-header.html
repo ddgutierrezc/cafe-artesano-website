@@ -1,0 +1,21 @@
+<header class="site-header" aria-label="Navegación principal" i18n-aria-label="@@header-navigation">
+  <div class="site-shell mx-auto flex min-h-20 items-center justify-between gap-4 px-5 max-[40rem]:flex-wrap max-[40rem]:gap-x-3 max-[40rem]:gap-y-1 max-[40rem]:py-2 md:px-8">
+    <a class="brand-link inline-flex shrink-0 p-1" href="#inicio" aria-label="Café Artesano, ir al inicio" i18n-aria-label="@@brand-home-link">
+      <img class="h-[3.25rem] w-[3.25rem] object-contain" src="/cafe-artesano-ca-v1.svg" width="64" height="64" alt="Monograma floral de Café Artesano" i18n-alt="@@brand-mark-alt" />
+    </a>
+    <nav class="site-nav flex justify-center gap-1 max-[40rem]:order-3 max-[40rem]:basis-full max-[40rem]:justify-between" aria-label="Secciones de Café Artesano" i18n-aria-label="@@section-navigation">
+      <a class="inline-flex min-h-11 items-center px-2.5 text-sm font-bold text-[var(--ca-ink)] no-underline hover:text-[var(--ca-forest-deep)] max-[40rem]:px-1 max-[40rem]:text-[0.82rem]" href="#origen" i18n="@@nav-origin">Origen</a>
+      <a class="inline-flex min-h-11 items-center px-2.5 text-sm font-bold text-[var(--ca-ink)] no-underline hover:text-[var(--ca-forest-deep)] max-[40rem]:px-1 max-[40rem]:text-[0.82rem]" href="#proceso" i18n="@@nav-process">Proceso</a>
+      <a class="inline-flex min-h-11 items-center px-2.5 text-sm font-bold text-[var(--ca-ink)] no-underline hover:text-[var(--ca-forest-deep)] max-[40rem]:px-1 max-[40rem]:text-[0.82rem]" href="#calidad" i18n="@@nav-quality">Calidad</a>
+      <a class="inline-flex min-h-11 items-center px-2.5 text-sm font-bold text-[var(--ca-ink)] no-underline hover:text-[var(--ca-forest-deep)] max-[40rem]:px-1 max-[40rem]:text-[0.82rem]" href="#contacto" i18n="@@nav-contact">Contacto</a>
+    </nav>
+    <div class="flex shrink-0 items-center gap-2">
+      <a class="inline-flex min-h-11 items-center rounded-lg border-2 border-[var(--ca-line)] px-3 text-[0.82rem] font-bold text-[var(--ca-ink)] no-underline hover:bg-[var(--ca-surface-action-hover)]" href="/en/" hreflang="en" lang="en" aria-label="Cambiar el idioma a inglés" title="Ver esta página en inglés" i18n="@@locale-switch-text" i18n-href="@@locale-switch-href" i18n-hreflang="@@locale-switch-hreflang" i18n-lang="@@locale-switch-lang" i18n-aria-label="@@locale-switch-aria-label" i18n-title="@@locale-switch-title">English</a>
+      <button class="theme-toggle inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border-2 border-[var(--ca-line)] bg-[var(--ca-surface)] text-xl text-[var(--ca-ink)]" type="button" (click)="themeToggle.emit()" [attr.aria-label]="themeToggleLabel()" [attr.aria-pressed]="theme() === 'dark'" [attr.title]="themeToggleLabel()">
+        <span aria-hidden="true">{{ theme() === 'dark' ? '☀' : '☾' }}</span>
+      </button>
+      <span class="sr-only" aria-live="polite">{{ themeStatusLabel() }}</span>
+      <a class="cta-primary inline-flex min-h-11 items-center justify-center rounded-lg px-3 text-[0.82rem] font-bold no-underline" href="https://wa.me/50671606734" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp (se abre en una pestaña nueva)" title="Escríbenos por WhatsApp (se abre en una pestaña nueva)" i18n="@@header-whatsapp-action" i18n-aria-label="@@header-whatsapp-action-label" i18n-title="@@header-whatsapp-action-title">Escríbenos</a>
+    </div>
+  </div>
+</header>
