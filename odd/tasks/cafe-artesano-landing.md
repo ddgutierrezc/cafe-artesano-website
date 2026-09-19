@@ -183,12 +183,12 @@ Estimated cumulative scope: 800–1,250 authored changed lines, excluding existi
   - [x] Delete `cafe-artesano/src/_redirects` so Netlify cannot restore the global Spanish SPA fallback.
   - [x] Test root/package configuration equivalence and run Netlify CLI build offline to validate actual resolved base/command/publish values.
   - [x] Publish again and verify the latest deploy succeeds, reports no redirects, preserves English `/en/` metadata, and keeps 404 behavior.
-- [ ] **CA-15 — WhatsApp-first contact actions** *(in progress)*
-  - [ ] Change header and hero primary CTAs to “Escríbenos” and link them to WhatsApp with accessible new-tab labels.
-  - [ ] Replace call-oriented contact copy and noscript actions in Spanish and English with WhatsApp messaging language.
-  - [ ] Keep `7160-6734` visibly available as secondary contact information without a primary `tel:` action.
-  - [ ] Re-extract all 66+ XLIFF units, update complete English targets, focused tests, and localized static artifacts.
-  - [ ] Verify both locale builds and live WhatsApp links after deployment.
+- [x] **CA-15 — WhatsApp-first contact actions**
+  - [x] Change header and hero primary CTAs to “Escríbenos” and link them to WhatsApp with accessible new-tab labels.
+  - [x] Replace call-oriented contact copy and noscript actions in Spanish and English with WhatsApp messaging language.
+  - [x] Keep `7160-6734` visibly available as secondary contact information without a primary `tel:` action.
+  - [x] Re-extract all 66+ XLIFF units, update complete English targets, focused tests, and localized static artifacts.
+  - [x] Verify both locale builds and live WhatsApp links after deployment.
 
 ## Acceptance criteria
 
@@ -270,7 +270,9 @@ Estimated cumulative scope: 800–1,250 authored changed lines, excluding existi
 - Commit `8e5e5af` deployed successfully as Netlify deploy `6aaeb25620a53100086fd71d`. The deploy summary reports no redirect rules. Live `/en/` has English title, `/en/` canonical, `en_US` Open Graph locale, English Organization description/noscript; `/` remains Spanish. The CA SVG returns 200, both legacy favicon URLs return 404, and an unknown English route returns 404.
 - Documentation-only commit `b8414d1` failed its Netlify build, and attempted root-relative correction `f48b147` also failed. A local `netlify build --offline` then provided decisive resolved-config evidence: Netlify selected `cafe-artesano/netlify.toml`, set current directory/base to `cafe-artesano`, and doubled the root-relative command/publish path (`cafe-artesano/cafe-artesano/...`). Therefore the package-local values were restored to app-relative and Netlify CLI verification became a release gate.
 - Commit `c8bcb85` deployed successfully as `6aaeb6a75b67410007e87b0a`. Netlify reports no redirect rules; live Spanish and English metadata/noscript are correct, the CA favicon returns 200, both legacy icon URLs return 404, and an unknown English route returns 404. CA-14 is closed.
+- CA-15 replaced both primary call CTAs with accessible WhatsApp actions, retained the phone as non-interactive secondary information, localized 70 XLIFF units, and updated Spanish/English noscript fallbacks. Independent verification found no severity findings; 37/37 tests, bilingual build, locale validator, retired-copy gates, and exact link semantics passed.
+- Commits `639816b` and `ce06332` deployed as `6aaeb939aab4cf000895f287`. Live Spanish and English bundles contain `Escríbenos`/`Message us`, the exact WhatsApp URL and localized new-tab labels; live fallbacks are message-oriented, no app `tel:` link remains, WhatsApp responds with a valid redirect, Netlify reports no redirects, and unknown English routes remain 404.
 
 ## Next step
 
-Implement, verify, and publish CA-15 WhatsApp-first contact actions. Verify both live locales, WhatsApp links, 404 behavior, and favicon; then perform the remaining visual/browser, Rich Results, and Facebook Sharing Debugger checks.
+Hard-refresh both locales and visually review responsive layout, theme switching, parallax, video behavior, locale navigation, WhatsApp handoff, and favicon. Then run Google Rich Results and Facebook Sharing Debugger. Migrate all absolute URLs together when a custom domain is available.
